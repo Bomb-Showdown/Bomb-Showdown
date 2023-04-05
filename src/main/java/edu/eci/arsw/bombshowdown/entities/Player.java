@@ -11,6 +11,7 @@ public class Player {
         this.name = name;
     }
 
+
     public void setLives(int lives) {
         this.lives = lives;
     }

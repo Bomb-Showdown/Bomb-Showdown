@@ -1,14 +1,12 @@
 package edu.eci.arsw.bombshowdown.entities;
 
-import io.vavr.collection.Array;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Syllabes {
+public class Syllables {
 
-    private static Syllabes instance;
+    private static Syllables instance;
 
     List<String> syllablesList = Arrays.asList("a", "ab", "c", "d");
 
@@ -18,10 +16,11 @@ public class Syllabes {
         return syllables;
     }
 
-    public static Syllabes getInstance(){
+
+    public static Syllables getInstance(){
 
         if(instance == null){
-            instance = new Syllabes();
+            instance = new Syllables();
         }
 
         return instance;

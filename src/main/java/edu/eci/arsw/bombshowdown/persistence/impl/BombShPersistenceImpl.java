@@ -1,7 +1,7 @@
 package edu.eci.arsw.bombshowdown.persistence.impl;
 
 import edu.eci.arsw.bombshowdown.entities.Player;
-import edu.eci.arsw.bombshowdown.entities.Syllabes;
+import edu.eci.arsw.bombshowdown.entities.Syllables;
 import edu.eci.arsw.bombshowdown.persistence.BombShPersistence;
 import org.languagetool.JLanguageTool;
 import org.languagetool.language.Spanish;
@@ -10,44 +10,42 @@ import org.languagetool.rules.RuleMatch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BombShPersistenceImpl implements BombShPersistence {
 
-    private ArrayList<Player> players= new ArrayList<>();
-    private int currentPlayer;
-    JLanguageTool langTool = new JLanguageTool(new Spanish());
+    private List<Player> players= new CopyOnWriteArrayList<>();
+
+    private int currentPlayer = 0;
+
     private int bombTimer;
 
-    static Syllabes syllabesInstance = Syllabes.getInstance();
+    private String currentSyllable;
+
+    static Syllables syllablesInstance = Syllables.getInstance();
 
     private final ArrayList<String> syllables;
 
     public BombShPersistenceImpl(){
-        syllables = syllabesInstance.getSyllables();
-    }
-
-
-
-    @Override
-    public Set<String> getSyllabes() {
-        return null;
+        syllables = syllablesInstance.getSyllables();
     }
 
     @Override
-    public String getSyllabe() {
+    public String getSyllable() {
 
         int max = syllables.size();
         int min = 0;
         int range = max - min + 1;
         int number = (int)(Math.random() * range) + min;
 
+        currentSyllable = syllables.get(number);
+
         return syllables.get(number);
 
     }
 
     @Override
-    public void deleteSyllabe(String syllabe) {
+    public void deleteSyllable(String syllabe) {
 
     }
 
@@ -56,8 +54,10 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
         boolean flag = false;
 
+        JLanguageTool langTool = new JLanguageTool(new Spanish());
         List<RuleMatch> matches = langTool.check(word);
-        if(!matches.isEmpty()){
+        System.out.println(matches + "the current syllable is: " + currentSyllable);
+        if(!matches.isEmpty() && word.contains(currentSyllable)){
             flag = true;
         }
 
@@ -65,7 +65,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
-    public ArrayList<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
@@ -89,23 +89,40 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     @Override
     public void nextPlayer() {
-        currentPlayer = (currentPlayer + 1) % players.size();
+
+//        boolean alive = false;
+//        int i = currentPlayer + 1;
+//        int jumps = 0;
+//
+//        while (!alive){
+//            if (players.get(i).getLives() == 0){
+//                jumps += 1;
+//            }
+//            else alive = true;
+//            i = (i + 1) % players.size();
+//            currentPlayer = (currentPlayer + 1) % players.size();
+//        }
+
+        if(currentPlayer + 1  > players.size() - 1) currentPlayer = 0;
+        else currentPlayer += 1;
+        getCurrentPlayer();
+
     }
 
     @Override
     public void addPlayer(String name) {
 
-        for(Player player:players){
-            if(player.getName().equals(name)){
-                System.out.println("player name already exists, try another");
-            }
-            else {
-                Player newPlayer= new Player(name, 3);
-            players.add(newPlayer);
-            }
-        }
+//        for(Player player:players){
+//            if(!players.isEmpty() & player.getName().equals(name)){
+//                System.out.println("player name already exists, try another");
+//            }
+//            else {
+//                Player newPlayer= new Player(name, 1);
+//                players.add(newPlayer);
+//            }
+//        }
 
-        Player newPlayer= new Player(name, 3);
+        Player newPlayer= new Player(name, 1);
         players.add(newPlayer);
     }
 
@@ -117,5 +134,25 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public Player getCurrentPlayer() {
         return players.get(currentPlayer);
+    }
+
+    @Override
+    public void updateLifes(String name) {
+        for(Player player:players){
+            if(player.getName().equals(name)){
+                player.setLives(player.getLives());
+            }
+        }
+    }
+
+    @Override
+    public void play(String word, int t0, int t1) throws IOException {
+        boolean correct = false;
+        int end = t0 + t1;
+        while (!correct && System.currentTimeMillis() < end){
+            if (checkWord(word)) {
+                correct = true;
+            }
+        }
     }
 }

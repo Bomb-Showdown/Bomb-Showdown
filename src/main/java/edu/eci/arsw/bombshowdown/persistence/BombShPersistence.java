@@ -4,19 +4,18 @@ import edu.eci.arsw.bombshowdown.entities.Player;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public interface BombShPersistence {
 
-    public Set<String> getSyllabes();
+    public String getSyllable();
 
-    public String getSyllabe();
+    public void deleteSyllable(String syllabe);
 
-    public void deleteSyllabe(String syllabe);
+    boolean checkWord(String word) throws IOException;
 
-    public boolean checkWord(String word) throws IOException;
-
-    public ArrayList<Player> getPlayers();
+    public List<Player> getPlayers();
 
     public int getBombTimer();
 
@@ -32,4 +31,8 @@ public interface BombShPersistence {
 
     public Player getCurrentPlayer();
 
+    public void updateLifes(String name);
+
+
+    void play(String word, int t0, int t1) throws IOException;
 }
