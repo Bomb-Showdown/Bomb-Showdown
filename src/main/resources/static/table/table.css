@@ -1,24 +1,48 @@
 #object {
   width: 100px;
   height: 100px;
-  background-color: red;
+  background-color: rgb(98, 0, 255);
   position: relative;
   transition: transform 0.5s ease-in-out;
 }
 
+body {
+  background-color: #73aeff;
+  margin: 0;
+}
+
 .game-container {
+  height: 680px;
+  width: 100%;
+  /*background-color: #2c2c2c;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.board-container {
   position: relative;
-  height: 400px;
-  width: 400px;
+  height: 680px;
+  width: 680px;
   /* margin: 0 auto; */
-  background-color: #222;
   overflow: hidden;
+}
+
+.text-container {
+  background-color: #1d1d1d87;
+  width: 100%;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .bomb {
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   background-color: red;
   top: 50%;
@@ -28,14 +52,17 @@
 
 .arrow {
   position: absolute;
-  width: 10px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: yellow;
+  width: 125px;
+  height: 125px;
   top: 50%;
   left: 50%;
+
   transform: translate(-50%, -50%);
-  transition: transform 0.15s ease;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  background-image: url('../img/arrow.png');
+  background-size: cover;
+  background-position: center;
 }
 
 /* #bomba img {
@@ -45,12 +72,50 @@
 
 .player {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  background-color: rgb(0, 60, 255);
+  width: 74px;
+  height: 74px;
+  background-color: rgb(192 199 219);
   text-align: center;
   line-height: 50px;
   font-size: 16px;
   font-weight: bold;
   color: white;
+  border-radius: 2px;
+  box-shadow: 0px 0px 10px 3px rgba(0, 0, 0 , .20);
+  color: #e400ff;
+
+  transition: all 0.05s ease;
+
+  background-image: url('../img/user.png');
+  /*background-size: cover;*/
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.player-container {
+
+}
+
+.player-selected {
+  outline: 2px solid black;
+  box-shadow: 0px 0px 10px 3px rgba(0, 0, 0 , .50);
+}
+
+input {
+  margin: 5px 2px; 
+  font-size: 30px;
+  border-radius: 143px;
+  border: 1px solid rgba(0, 0, 0, 0);
+  transition: all 200ms ease;
+  width: 500px;
+  background-color: #080808a6;
+  color: white;
+  text-align: center;
+  padding: 12px 7px 7px 7px;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+input:hover {
+  border: 1px solid rgba(0, 0, 0, 0.281);
+  /* box-shadow: 0 6px 10px 0 rgba(0, 0, 0 , .22); */
 }

@@ -25,7 +25,7 @@ var player5 = {"name": "Bob",
                 "lives": 3};
 var player6 = {"name": "Hector",
                 "lives": 0};
-var players = [player1, player2, player3, player4, player5, player6];
+var players = [player1, player2, player3, player4, player5];
 var currentPlayer = 0;
 
 var arrowAngle;
@@ -37,11 +37,11 @@ $(document).ready(function () {
     var nPlayers = players.length; 
 
     var angle = (2 * Math.PI / nPlayers); // ángulo entre cada jugador
-    var r = 120;
-    var playerDim = 50;
+    var r = 175;
+    var playerDim = 74;
     
-    var centerX = $(".game-container").width() / 2;
-    var centerY = $(".game-container").width() / 2;
+    var centerX = $(".board-container").width() / 2;
+    var centerY = $(".board-container").width() / 2;
 
     for (let i = 0; i < nPlayers; i++) {
         let x = centerX + (r * Math.cos(i * angle)); // x = x_0 + r cos(t)
@@ -50,7 +50,7 @@ $(document).ready(function () {
             left: (x - (playerDim/2)) + "px",
             top: (y - (playerDim/2)) + "px"
         });
-        $(".game-container").append(player);
+        $(".board-container").append(player);
         players[i].div = player;
     }
 
@@ -63,6 +63,8 @@ $(document).ready(function () {
     arrow.css({
         'transform': 'translate(-50%, -50%)' + 'rotate(' + (arrowAngle) + 'deg)'
     });
+
+    updatePlayersState();
 
     // NEXT PLAYER
     button.on('click', rotateArrow);
@@ -92,6 +94,9 @@ var nextAlive = function() {
     let scape = false;
     let i = currentPlayer+1;
     let jumps = 0;
+    players[currentPlayer].div.css("outline", "0px solid white");
+    players[currentPlayer].div.css("box-shadow", "0px 0px 10px 3px rgba(0, 0, 0 , .20)");
+    // players[currentPlayer].div.removeClass("player-selected");
     while (!scape) {
         if (players[i].lives == 0) {
             jumps++;
@@ -101,6 +106,9 @@ var nextAlive = function() {
         i = (i + 1) % players.length;
         currentPlayer = (currentPlayer + 1) % players.length;
     }
+    players[currentPlayer].div.css("outline", "2px solid white");
+    players[currentPlayer].div.css("box-shadow", "0px 0px 10px 3px rgba(0, 0, 0 , .50)");
+    // players[currentPlayer].div.addClass("player-selected");
     return jumps;
 }
 
@@ -116,4 +124,10 @@ var updatePlayersState = function () {
             });
         }
     }
+}
+
+function upperCaseF(a){
+    setTimeout(function(){
+        a.value = a.value.toUpperCase();
+    }, 1);
 }
