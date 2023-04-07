@@ -20,7 +20,7 @@ var player5 = {"name": "Bob",
 var player6 = {"name": "Hector",
                 "lives": 0};
 var player7 = {"name": "Vicky",
-                "lives": 1};
+                "lives": 4};
 var player8 = {"name": "Manolo Johnson",
                 "lives": 0};
                 
@@ -32,6 +32,8 @@ var arrow;
 var degreeAngle;
 
 var liveIcon = '💗';
+var deadIcon = '💀';
+var correctSfx = new Audio('./../sounds/correct.wav');
 
 $(document).ready(function () {
     
@@ -77,13 +79,18 @@ $(document).ready(function () {
  * Hace rotar la flecha central hacia el siguiente jugador
  */
 var rotateArrow = function() {
+    //animateCSS(players[currentPlayer].div, 'headShake');
+    animateCSS(players[currentPlayer].div, 'rotateCenter');
+    
     arrowAngle += degreeAngle + degreeAngle*nextAlive();
-
     console.log('currentPlayer :>> ', currentPlayer);
 
     arrow.css({
         'transform': 'translate(-50%, -50%)' + 'rotate(' + arrowAngle + 'deg)'
     });
+
+    players[6].lives -= 1;
+    //correctSfx.play();
 
     updatePlayersState();
     updateInputState();
@@ -102,7 +109,7 @@ var nextAlive = function() {
     players[currentPlayer].div.css("box-shadow", "0px 0px 10px 1px rgba(0, 0, 0 , .20)");
     // players[currentPlayer].div.removeClass("player-selected");
     while (!scape) {
-        if (players[i].lives == 0) {
+        if (players[i].lives <= 0) {
             jumps++;
         } else {
             scape = true;
@@ -127,8 +134,11 @@ var updatePlayersState = function () {
                 color: 'black'
             });
             players[i].div.find('p').eq(0).addClass('dead');
-            players[i].div.find('p').eq(1).text('💀');
+            players[i].div.find('p').eq(1).text(deadIcon);
+        } else if (players[i].lives >= 0) {
+            players[i].div.find('p').eq(1).text(`${liveIcon.repeat(players[i].lives)}`);
         }
+
     }
 }
 
@@ -156,3 +166,27 @@ function upperCaseF(a){
 var updateBombState  = function() {
 
 }
+
+/**
+ * Anima un elemento dado el nombre de la animación (Adaptado de: https://animate.style/#javascript)
+ * @param {*} div elemento a animar
+ * @param {*} animation nombre de la animación
+ * @param {*} prefix prefijo
+ * @returns 
+ */
+const animateCSS = (div, animation, prefix = 'animate__') =>
+  // We create a Promise and return it
+  new Promise((resolve, reject) => {
+    const animationName = `${prefix}${animation}`;
+
+    div.addClass(`${prefix}animated` + ' ' + animationName);
+
+    // When the animation ends, we clean the classes and resolve the Promise
+    function handleAnimationEnd(event) {
+      event.stopPropagation();
+      div.removeClass(`${prefix}animated` + ' ' + animationName);
+      resolve('Animation ended');
+    }
+
+    div.one('animationend', handleAnimationEnd);
+  });
