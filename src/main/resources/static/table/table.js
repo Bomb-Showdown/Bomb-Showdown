@@ -142,4 +142,6 @@ function upperCaseF(a){
     }, 1);
 }
 
-$(selector).val();
+var updateBombState  = function() {
+
+}
