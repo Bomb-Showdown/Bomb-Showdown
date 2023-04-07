@@ -1,16 +1,10 @@
-// const button = document.getElementById('button');
-// const objeto = document.getElementById('object');
-// let angle = 0;
 
-// button.addEventListener('click', () => {
-//     objeto.classList.add('rotate');
-//     angle += 120;
-//     objeto.style.transform = `rotate(${angle}deg)`;
-// });
+var me = "Andrés";
+var syllable = "AUD"
 
-// objeto.addEventListener('transitionend', () => {
-//     objeto.classList.remove('rotate');
-// });
+$(document).ready(function() {
+    $('#id').text('me: ' + me + ' - syllable: ' + syllable);
+});
 
 var player1 = {"name": "Andrés",
                 "lives": 3,
@@ -83,6 +77,7 @@ var rotateArrow = function() {
     });
 
     updatePlayersState();
+    updateInputState();
 }
 
 
@@ -92,7 +87,7 @@ var rotateArrow = function() {
  */
 var nextAlive = function() {
     let scape = false;
-    let i = currentPlayer+1;
+    let i = (currentPlayer + 1) % players.length;
     let jumps = 0;
     players[currentPlayer].div.css("outline", "0px solid white");
     players[currentPlayer].div.css("box-shadow", "0px 0px 10px 3px rgba(0, 0, 0 , .20)");
@@ -126,8 +121,25 @@ var updatePlayersState = function () {
     }
 }
 
+/**
+ * Actualiza la visualización del input de texto para el jugador
+ */
+var updateInputState = function() {
+    if (players[currentPlayer].name != me) {
+        $('.input-text').css('display', 'none');
+        $('.current-player').text('Turno de ' + players[currentPlayer].name + '.');
+        $('.current-player').css('display', 'block');
+    } else {
+        $('.input-text').css('display', 'block');
+        $('.input-text').val('');
+        $('.current-player').css('display', 'none');
+    }
+}
+
 function upperCaseF(a){
     setTimeout(function(){
         a.value = a.value.toUpperCase();
     }, 1);
 }
+
+$(selector).val();

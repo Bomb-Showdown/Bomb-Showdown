@@ -15,10 +15,11 @@
     <title>Document</title>
   </head>
   <body>
+    <div id="id"></div>
     <button id="button">Girar</button>
     <!-- <div id="object"></div> -->
-    <div class="text-container">
-    </div>
+    <!-- <div class="text-container">
+    </div> -->
     <div class="game-container">
       <div class="board-container">
         <div class="arrow"></div>
@@ -26,7 +27,8 @@
       </div>
     </div>
     <div class="text-container">
-      <input type="text" onkeydown="upperCaseF(this)">
+      <p class="current-player"></p>
+      <input type="text" class="input-text" onkeydown="upperCaseF(this)">
     </div>
     <script src="./table/table.js"></script>
   </body>
