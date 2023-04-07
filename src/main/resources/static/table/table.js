@@ -10,7 +10,7 @@ var player1 = {"name": "Andrés",
                 "lives": 3,
                 "div": null};
 var player2 = {"name": "Juanpa",
-                "lives": 3};
+                "lives": 2};
 var player3 = {"name": "Julián",
                 "lives": 3};
 var player4 = {"name": "Vladimir",
@@ -19,12 +19,19 @@ var player5 = {"name": "Bob",
                 "lives": 3};
 var player6 = {"name": "Hector",
                 "lives": 0};
-var players = [player1, player2, player3, player4, player5];
+var player7 = {"name": "Vicky",
+                "lives": 1};
+var player8 = {"name": "Manolo Johnson",
+                "lives": 0};
+                
+var players = [player1, player2, player3, player4, player5, player6, player7, player8];
 var currentPlayer = 0;
 
 var arrowAngle;
 var arrow;
 var degreeAngle;
+
+var liveIcon = '💗';
 
 $(document).ready(function () {
     
@@ -40,10 +47,12 @@ $(document).ready(function () {
     for (let i = 0; i < nPlayers; i++) {
         let x = centerX + (r * Math.cos(i * angle)); // x = x_0 + r cos(t)
         let y = centerY + (r * Math.sin(i * angle)); // y = y_0 + r sen(t)
-        let player = $("<div>").text(players[i].name).addClass("player").css({
+        let player = $("<div>")./*text(players[i].name).*/addClass("player").css({
             left: (x - (playerDim/2)) + "px",
             top: (y - (playerDim/2)) + "px"
         });
+        player.append('<p class="player-name">' + players[i].name + '</p>');
+        player.append('<p class="player-lives">'+ `${liveIcon.repeat(players[i].lives)}` +'</p>');
         $(".board-container").append(player);
         players[i].div = player;
     }
@@ -90,7 +99,7 @@ var nextAlive = function() {
     let i = (currentPlayer + 1) % players.length;
     let jumps = 0;
     players[currentPlayer].div.css("outline", "0px solid white");
-    players[currentPlayer].div.css("box-shadow", "0px 0px 10px 3px rgba(0, 0, 0 , .20)");
+    players[currentPlayer].div.css("box-shadow", "0px 0px 10px 1px rgba(0, 0, 0 , .20)");
     // players[currentPlayer].div.removeClass("player-selected");
     while (!scape) {
         if (players[i].lives == 0) {
@@ -117,6 +126,8 @@ var updatePlayersState = function () {
                 'background-color': 'red',
                 color: 'black'
             });
+            players[i].div.find('p').eq(0).addClass('dead');
+            players[i].div.find('p').eq(1).text('💀');
         }
     }
 }

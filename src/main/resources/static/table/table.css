@@ -59,6 +59,7 @@ body {
   color: white;
   font-family: 'Josefin Sans', sans-serif;
   text-shadow: 1px 1px 4px black;
+  font-weight: bold;
 }
 
 .arrow {
@@ -69,7 +70,7 @@ body {
   left: 50%;
 
   transform: translate(-50%, -50%);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   background-image: url('../img/arrow.png');
   background-size: cover;
@@ -89,11 +90,10 @@ body {
   text-align: center;
   line-height: 50px;
   font-size: 16px;
-  font-weight: bold;
+  /*font-weight: bold;*/
   color: white;
   border-radius: 2px;
-  box-shadow: 0px 0px 10px 3px rgba(0, 0, 0 , .20);
-  color: #e400ff;
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0 , .20);
 
   transition: all 0.05s ease;
 
@@ -103,8 +103,31 @@ body {
   background-repeat: no-repeat;
 }
 
-.player-container {
+.player-name {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -157%);
+  font-size: 22px;
+  font-family: 'Josefin Sans', sans-serif;
+  text-shadow: 1px 1px 5px #000000c4;
+  margin: 0;
+  width: 160px;
+}
 
+.player-lives {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 25%);
+  font-size: 22px;
+  width: 150px;
+  margin: 0;
+}
+
+.dead {
+  color: #ffffffd9;
+  text-decoration: line-through;
 }
 
 .player-selected {
@@ -136,4 +159,5 @@ body {
   color: white;
   font-family: 'Josefin Sans', sans-serif;
   font-size: 20px;
+  text-shadow: 1px 1px 5px black;
 }
