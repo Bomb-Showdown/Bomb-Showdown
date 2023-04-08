@@ -3,6 +3,7 @@ package edu.eci.arsw.websocket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -17,13 +18,14 @@ public class STOMPMessagesController {
 
     List<String> rooms = new CopyOnWriteArrayList<>();
 
-    @MessageMapping("/code.{room}")
-    public String messagesHandler(String code, @DestinationVariable String room) throws Exception {
-        msgt.convertAndSend("/topic/code."+room, code);
-        if (!rooms.contains(room)) {
-            rooms.add(room);
-        }
-        System.out.println(rooms);
-        return "You just entered to the room with code: " + code;
+    @MessageMapping("/room.{room}")
+    //@SendTo("/topic/room")
+    public void messagesHandler(String code, @DestinationVariable String room) throws Exception {
+        msgt.convertAndSend("/topic/room."+room, code);
+//        if (!rooms.contains(room)) {
+//            rooms.add(room);
+//        }
+//        System.out.println(rooms);
+        //return "You just entered to the room with code: " + code;
     }
 }

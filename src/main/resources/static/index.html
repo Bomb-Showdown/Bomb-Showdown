@@ -11,14 +11,22 @@
 
     </head>
 
-    <body>
+    <body onload="websocket.init()">
         <div>
             <input id="code" type="text" placeholder="room code"/> 
             <button onclick="websocket.connection($('#code').val())">Connect to websocket</button>
             <button onclick="websocket.send($('#code').val())">send</button>
         </div>
+        <div class="word-input">
+            <input type="text" name="text" id="sample"/>
+        </div>
+        <span id="result"></span>
 
-        <div class="table">
+        <div class="word">
+            <span id="test"></span>
+        </div>
+
+        <!-- <div class="table">
             <table id="response" class="table table-striped">
                 <thead>
                 <tr>
@@ -28,6 +36,6 @@
                 <tbody id="res">
                 </tbody>
             </table>
-        </div>
+        </div> -->
     </body>
 </html>
