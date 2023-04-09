@@ -12,6 +12,7 @@ public interface BombShPersistence {
     public String getSyllable();
 
     public void deleteSyllable(String syllabe);
+    public void setSyllable();
 
     boolean checkWord(String word) throws IOException;
 

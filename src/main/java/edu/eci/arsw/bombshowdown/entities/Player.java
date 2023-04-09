@@ -30,4 +30,12 @@ public class Player {
     public void reduceLive(){
         this.lives = lives - 1;
     }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "lives=" + lives +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

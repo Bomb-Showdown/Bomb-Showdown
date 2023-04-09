@@ -28,6 +28,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     public BombShPersistenceImpl(){
         syllables = syllablesInstance.getSyllables();
+        currentSyllable = syllables.get(0);
     }
 
     @Override
@@ -50,6 +51,12 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
+    public void setSyllable() {
+        currentSyllable = syllablesInstance.getRandomSyllable();
+        System.out.println(currentSyllable);
+    }
+
+    @Override
     public boolean checkWord(String word) throws IOException {
 
         boolean flag = false;
@@ -57,8 +64,10 @@ public class BombShPersistenceImpl implements BombShPersistence {
         JLanguageTool langTool = new JLanguageTool(new Spanish());
         List<RuleMatch> matches = langTool.check(word);
         System.out.println(matches + "the current syllable is: " + currentSyllable);
-        if(!matches.isEmpty() && word.contains(currentSyllable)){
+        if(matches.isEmpty() && word.contains(currentSyllable)){
             flag = true;
+            this.nextPlayer();
+            this.setSyllable();
         }
 
         return flag;
@@ -89,23 +98,9 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     @Override
     public void nextPlayer() {
-
-//        boolean alive = false;
-//        int i = currentPlayer + 1;
-//        int jumps = 0;
-//
-//        while (!alive){
-//            if (players.get(i).getLives() == 0){
-//                jumps += 1;
-//            }
-//            else alive = true;
-//            i = (i + 1) % players.size();
-//            currentPlayer = (currentPlayer + 1) % players.size();
-//        }
-
         if(currentPlayer + 1  > players.size() - 1) currentPlayer = 0;
         else currentPlayer += 1;
-        getCurrentPlayer();
+        System.out.println(getCurrentPlayer());
 
     }
 
@@ -154,5 +149,16 @@ public class BombShPersistenceImpl implements BombShPersistence {
                 correct = true;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "BombShPersistenceImpl{" +
+                "players=" + players + "\n" +
+                ", currentPlayer=" + currentPlayer +
+                ", bombTimer=" + bombTimer +
+                ", currentSyllable='" + currentSyllable + '\'' +
+                ", syllables=" + syllables +
+                '}';
     }
 }

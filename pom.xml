@@ -62,6 +62,12 @@
 
 		<dependency>
 			<groupId>org.languagetool</groupId>
+			<artifactId>languagetool-core</artifactId>
+			<version>6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.languagetool</groupId>
 			<artifactId>language-es</artifactId>
 			<version>6.0</version>
 		</dependency>
