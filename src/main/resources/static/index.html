@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="./table/table.css">
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> -->
     <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +18,21 @@
     
     <title>Bomb Showdown</title>
   </head>
-  <body>
+  <body onload="websocket.init()">
+    <div>
+      <input id="code" type="text" placeholder="room code"/>
+      <button onclick="websocket.connection($('#code').val())">Connect to room</button>
+      <input id="name" type="text" placeholder="name"/>
+      <button onclick="websocket.joinRoom($('#name').val())">Add player</button>
+      <input id="word" type="text" placeholder="word"/>
+      <button onclick="websocket.checkWord($('#word').val())">Check</button>
+  </div>
+  <div class="word-input">
+      <input type="text" name="text" id="input"/>
+  </div>
+  <div class="word">
+      <p id="word-ws"></p>
+  </div>
     <div id="id"></div>
     <button id="button">Girar</button>
     <!-- <div id="object"></div> -->
@@ -35,5 +51,6 @@
       <input type="text" class="input-text" onkeydown="upperCaseF(this)" autofocus>
     </div>
     <script src="./table/table.js"></script>
+    <script src="/websocket.js"></script>
   </body>
 </html>
