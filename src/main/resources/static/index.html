@@ -14,28 +14,17 @@
     <body onload="websocket.init()">
         <div>
             <input id="code" type="text" placeholder="room code"/> 
-            <button onclick="websocket.connection($('#code').val())">Connect to websocket</button>
-            <button onclick="websocket.send($('#code').val())">send</button>
+            <button onclick="websocket.connection($('#code').val())">Connect to room</button>
+            <input id="name" type="text" placeholder="name"/>
+            <button onclick="websocket.joinRoom($('#name').val())">Add player</button>
+            <input id="word" type="text" placeholder="word"/> 
+            <button onclick="websocket.checkWord($('#word').val())">Check</button>
         </div>
         <div class="word-input">
-            <input type="text" name="text" id="sample"/>
+            <input type="text" name="text" id="input"/>
         </div>
-        <span id="result"></span>
-
         <div class="word">
-            <span id="test"></span>
+            <span id="word-ws"></span>
         </div>
-
-        <!-- <div class="table">
-            <table id="response" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Message</th>
-                </tr>
-                </thead>
-                <tbody id="res">
-                </tbody>
-            </table>
-        </div> -->
     </body>
 </html>

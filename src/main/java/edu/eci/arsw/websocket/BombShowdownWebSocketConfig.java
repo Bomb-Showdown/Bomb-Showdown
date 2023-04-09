@@ -12,7 +12,7 @@ public class BombShowdownWebSocketConfig extends AbstractWebSocketMessageBrokerC
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
+        config.enableSimpleBroker("/rooms");
         config.setApplicationDestinationPrefixes("/app");
     }
 

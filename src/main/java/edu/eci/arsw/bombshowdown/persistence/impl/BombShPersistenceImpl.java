@@ -34,14 +34,15 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public String getSyllable() {
 
-        int max = syllables.size();
-        int min = 0;
-        int range = max - min + 1;
-        int number = (int)(Math.random() * range) + min;
-
-        currentSyllable = syllables.get(number);
-
-        return syllables.get(number);
+//        int max = syllables.size();
+//        int min = 0;
+//        int range = max - min + 1;
+//        int number = (int)(Math.random() * range) + min;
+//
+//        currentSyllable = syllables.get(number);
+//
+//        return syllables.get(number);
+        return currentSyllable;
 
     }
 
@@ -53,7 +54,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public void setSyllable() {
         currentSyllable = syllablesInstance.getRandomSyllable();
-        System.out.println(currentSyllable);
+        //System.out.println(currentSyllable);
     }
 
     @Override
@@ -100,7 +101,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
     public void nextPlayer() {
         if(currentPlayer + 1  > players.size() - 1) currentPlayer = 0;
         else currentPlayer += 1;
-        System.out.println(getCurrentPlayer());
+        //System.out.println(getCurrentPlayer());
 
     }
 
@@ -154,10 +155,10 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public String toString() {
         return "BombShPersistenceImpl{" +
-                "players=" + players + "\n" +
+                "players=" + players +
                 ", currentPlayer=" + currentPlayer +
                 ", bombTimer=" + bombTimer +
-                ", currentSyllable='" + currentSyllable + '\'' +
+                ", currentSyllable='" + currentSyllable +
                 ", syllables=" + syllables +
                 '}';
     }

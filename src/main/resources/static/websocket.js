@@ -15,6 +15,7 @@ var websocket = (function() {
     var players = [player1, player2, player3, player4, player5];
     var word = "";
     var syllable = null;
+    var currentPlayer = null;
 
     function connectAndSubscribe(code) {
         if (stompClient !== null) {
@@ -24,12 +25,10 @@ var websocket = (function() {
         var socket = new SockJS('/bs');
         stompClient = Stomp.over(socket);
         room = code;
-        console.log('---ME CONECTÉ AL ROOM---');
-        console.log(room);
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            var letter = document.getElementById("test");
-            stompClient.subscribe('/topic/room.'+room, function (eventbody) {
+            var letter = document.getElementById("word-ws");
+            stompClient.subscribe('/rooms/'+room, function (eventbody) {
                 console.log(letter);
                 letter.textContent = eventbody.body;
             });
@@ -38,38 +37,19 @@ var websocket = (function() {
 
     return {
         init: function() {
-            var log = document.getElementById("result");
-            var input = document.querySelector("#sample");
+            var input = document.querySelector("#input");
             if (input) {
-                console.log('Entra');
-                input.addEventListener("keyup",  function(event){
+                input.addEventListener("keyup", function(event){
                     const key = event.key;
-                    if (/^[a-zA-ZñÑ]$/.test(key)) {
-                        log.textContent = `${event.key}`;
-                        //word += `${event.key}`;
-                        word = $("#sample").val();
-                        console.log("+ /// " + word);
-                    } else if (key === 'Backspace') {
-                        //word = word.slice(0, -1);
-                        word = $("#sample").val();
-                        console.log("- /// " + word);                   
-                    } else {
-                        event.preventDefault();
-                        console.log("nada /// " + word);  
+                    // Mira si la entrada es una letra
+                    word = $("#input").val();
+                    if (key === 'Enter') {
+                        // check word
+                        console.log("Mirar validez de la palabra");
                     }
-                    stompClient.send("/app/room."+room, {}, JSON.stringify(word));
+                    stompClient.send("/app/rooms/"+room, {}, JSON.stringify(word));
                 });
             }
-            console.log('No Entra');
-        },
-
-        send: function(code) {
-            //stompClient.send("/app/room."+room, {}, JSON.stringify({'room':code}));
-            stompClient.send("/app/room."+room, {}, JSON.stringify(word));
-        },
-
-        wordFunction: function(word) {
-            input.addEventListener("keypress", logKey);
         },
                 
         disconnect: function () {
@@ -82,6 +62,24 @@ var websocket = (function() {
 
         connection : function(code) {
             connectAndSubscribe(code);
+        },
+
+        joinRoom : function(player) {
+            $.ajax({
+                type: "PUT",
+                url: "/games/rooms/"+room+"/players",
+                data: player,
+                contentType: "text/html"
+            });
+        },
+
+        checkWord : function(word) {
+            $.ajax({
+                type: "POST",
+                url: "/games/rooms/"+room,
+                data: word,
+                contentType: "text/html"
+            });
         }
     };
 
