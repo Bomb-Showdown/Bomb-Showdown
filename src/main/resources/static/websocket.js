@@ -29,8 +29,16 @@ var websocket = (function() {
             console.log('Connected: ' + frame);
             var letter = document.getElementById("word-ws");
             stompClient.subscribe('/rooms/'+room, function (eventbody) {
-                console.log(letter);
-                letter.textContent = eventbody.body;
+                console.log('eventbody.body :>> ', JSON.parse(eventbody.body));
+                addPlayers(JSON.parse(eventbody.body));
+            });
+            
+            stompClient.subscribe('/rooms/party/'+room, function (eventbody) {
+                if (JSON.parse(eventbody.body).correct) {
+                    rotateArrow(JSON.parse(eventbody.body));
+                } else if (!JSON.parse(eventbody.body).correct) {
+                    wrongAnswer();
+                }
             });
         });
     };
@@ -71,14 +79,20 @@ var websocket = (function() {
                 data: player,
                 contentType: "text/html"
             });
+            me = player;
         },
 
-        checkWord : function(word) {
+        checkWord : function(word, callback) {
             $.ajax({
                 type: "POST",
-                url: "/games/rooms/"+room,
+                url: "/games/rooms/"+room+"/word",
                 data: word,
                 contentType: "text/html"
+            }).then((response)  => {
+                // if (JSON.parse(response).correct) {
+                //     console.log(response.correct);
+                //     callback();
+                // }
             });
         }
     };

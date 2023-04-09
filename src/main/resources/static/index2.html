@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/websocket.js"></script>
+
+</head>
+
+<body onload="websocket.init()">
+<div>
+    <input id="code" type="text" placeholder="room code"/>
+    <button onclick="websocket.connection($('#code').val())">Connect to room</button>
+    <input id="name" type="text" placeholder="name"/>
+    <button onclick="websocket.joinRoom($('#name').val())">Add player</button>
+    <input id="word" type="text" placeholder="word"/>
+    <button onclick="websocket.checkWord($('#word').val())">Check</button>
+</div>
+<div class="word-input">
+    <input type="text" name="text" id="input"/>
+</div>
+<div class="word">
+    <span id="word-ws"></span>
+</div>
+</body>
+</html>

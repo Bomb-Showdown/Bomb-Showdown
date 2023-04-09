@@ -24,7 +24,7 @@ var player7 = {"name": "Vicky",
 var player8 = {"name": "Manolo Johnson",
                 "lives": 0};
                 
-var players = [player1, player2, player3, player4, player5, player6, player7, player8];
+var players = [];
 var currentPlayer = 0;
 
 var arrowAngle;
@@ -36,13 +36,26 @@ var deadIcon = '💀';
 var correctSfx = new Audio('./../sounds/correct.wav');
 
 $(document).ready(function () {
+    //addPlayer("Manolo");
+});
+
+
+var addPlayers = function(newPlayers) {
+
+    players = newPlayers;
     
-    var nPlayers = players.length; 
+    $('.board-container').empty();
+    $('.board-container').append("<div class=\"arrow\"></div>\n" +
+    "        <div class=\"bomb\">\n" +
+    "          <p class=\"syllable\">AUD</p>\n" +
+    "        </div>");
+
+    var nPlayers = players.length;
 
     var angle = (2 * Math.PI / nPlayers); // ángulo entre cada jugador
     var r = 175;
     var playerDim = 74;
-    
+
     var centerX = $(".board-container").width() / 2;
     var centerY = $(".board-container").width() / 2;
 
@@ -70,15 +83,13 @@ $(document).ready(function () {
     });
 
     updatePlayersState();
-
-    // NEXT PLAYER
-    button.on('click', rotateArrow);
-});
+    updateInputState();
+}
 
 /**
  * Hace rotar la flecha central hacia el siguiente jugador
  */
-var rotateArrow = function() {
+var rotateArrow = function(info) {
     //animateCSS(players[currentPlayer].div, 'headShake');
     animateCSS(players[currentPlayer].div, 'rotateCenter');
     
@@ -89,9 +100,10 @@ var rotateArrow = function() {
         'transform': 'translate(-50%, -50%)' + 'rotate(' + arrowAngle + 'deg)'
     });
 
-    players[6].lives -= 1;
+    syllable = info.syllable;
     //correctSfx.play();
 
+    updateBombState();
     updatePlayersState();
     updateInputState();
 }
@@ -157,14 +169,19 @@ var updateInputState = function() {
     }
 }
 
+var updateBombState = function() {
+    console.log('syllable :>> ', syllable);
+    $('.syllable').text(syllable.toUpperCase());
+}
+
 function upperCaseF(a){
     setTimeout(function(){
         a.value = a.value.toUpperCase();
     }, 1);
 }
 
-var updateBombState  = function() {
-
+var wrongAnswer = function () {
+    animateCSS(players[currentPlayer].div, 'headShake');
 }
 
 /**
@@ -190,3 +207,15 @@ const animateCSS = (div, animation, prefix = 'animate__') =>
 
     div.one('animationend', handleAnimationEnd);
   });
+
+var input = document.querySelector(".input-text");
+
+// Execute a function when the user presses a key on the keyboard
+input.addEventListener("keypress", function(event) {
+  // If the user presses the "Enter" key on the keyboard
+  if (event.key === "Enter") {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    websocket.checkWord($(".input-text").val(), rotateArrow);
+  }
+});

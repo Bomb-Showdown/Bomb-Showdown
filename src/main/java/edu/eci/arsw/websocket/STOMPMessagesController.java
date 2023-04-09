@@ -34,11 +34,17 @@ public class STOMPMessagesController {
 
     @MessageMapping("/rooms/{room}")
     public void messagesHandler(String word, @DestinationVariable String room) throws Exception {
+        if (!rooms.containsKey(room)) {
+            rooms.put(room, new BombShPersistenceImpl());
+        }
         msgt.convertAndSend("/rooms/"+room, word);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/rooms/{room}/players", consumes = "text/html")
     public ResponseEntity<?> handlerPutResource(@PathVariable String room, @RequestBody String player) {
+        if (!rooms.containsKey(room)) {
+            rooms.put(room, new BombShPersistenceImpl());
+        }
         System.out.println(player);
         BombShPersistence game = rooms.get(room);
         game.addPlayer(player);
@@ -47,27 +53,31 @@ public class STOMPMessagesController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}/word", consumes = "text/html")
     public ResponseEntity<?> handlerPostResource(@PathVariable String room, @RequestBody String word) {
         try {
             BombShPersistence game = rooms.get(room);
             Gson gson = new Gson();
             JsonObject json = new JsonObject();
-            json.addProperty("correct", game.checkWord(word));
+            json.addProperty("correct", game.checkWord(word.toLowerCase()));
             json.addProperty("syllable", game.getSyllable());
             json.addProperty("player", game.getCurrentPlayer().getName());
-            msgt.convertAndSend("/rooms/"+room, gson.toJson(json));
+            System.out.println("/parties/"+room + gson.toJson(json));
+            msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
+            return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}", consumes = "application/json")
-    public ResponseEntity<?> handlerPostResourceRoom(@PathVariable String room, @RequestBody String word) {
-        if (!rooms.containsKey(room)) {
-            rooms.put(room, new BombShPersistenceImpl());
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}", consumes = "application/json")
+//    public ResponseEntity<?> handlerPostResourceRoom(@PathVariable String room, @RequestBody String word) {
+//        if (!rooms.containsKey(room)) {
+//            rooms.put(room, new BombShPersistenceImpl());
+//        }
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 }
