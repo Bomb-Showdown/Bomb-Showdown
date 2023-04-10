@@ -32,9 +32,14 @@ public class STOMPMessagesController {
 
     Map<String, BombShPersistence> rooms = new ConcurrentHashMap<>();
 
-    @MessageMapping("/rooms/{room}")
+    @MessageMapping("/rooms/waiting-room/{room}")
     public void messagesHandler(String word, @DestinationVariable String room) throws Exception {
-        msgt.convertAndSend("/rooms/"+room, word);
+        msgt.convertAndSend("/rooms/waiting-room/"+room, word);
+    }
+
+    @MessageMapping("/rooms/text/{room}")
+    public void textHandler(String word, @DestinationVariable String room) throws Exception {
+        msgt.convertAndSend("/rooms/text/"+room, word);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/rooms/{room}/players", consumes = "text/html")
@@ -44,7 +49,7 @@ public class STOMPMessagesController {
             BombShPersistence game = rooms.get(room);
             game.addPlayer(player);
             System.out.println(game);
-            msgt.convertAndSend("/rooms/"+room, game.getPlayers());
+            msgt.convertAndSend("/rooms/waiting-room/"+room, game.getPlayers());
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -69,6 +74,20 @@ public class STOMPMessagesController {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}/start")
+    public ResponseEntity<?> handlerStart(@PathVariable String room) {
+        BombShPersistence game = rooms.get(room);
+        Gson gson = new Gson();
+        JsonObject json = new JsonObject();
+        json.addProperty("correct", "");
+        json.addProperty("syllable", game.getSyllable());
+        json.addProperty("player", game.getCurrentPlayer().getName());
+        System.out.println("/parties/"+room + gson.toJson(json));
+        msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
+        return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
 
     }
 

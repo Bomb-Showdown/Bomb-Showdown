@@ -28,6 +28,8 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     private final ArrayList<String> syllables;
 
+    private boolean started = false;
+
     public BombShPersistenceImpl(){
         syllables = syllablesInstance.getSyllables();
         currentSyllable = syllables.get(0);
@@ -128,6 +130,11 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public void killPlayer() {
 
+    }
+
+    @Override
+    public void start() {
+        started = true;
     }
 
     @Override
