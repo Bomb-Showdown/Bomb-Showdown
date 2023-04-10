@@ -35,7 +35,7 @@ var liveIcon = '💗';
 var deadIcon = '💀';
 var sfx = {'correct': new Audio('./../sounds/correct.wav'),
            'incorrect': new Audio('./../sounds/Error.wav')};
-var entranceAnimations = ['animate__fadeInDown', 'animate__jackInTheBox', 'animate__rollIn', 'animate__zoomIn'];
+var entranceAnimations = ['fadeInDown', 'jackInTheBox', 'rollIn', 'zoomIn'];
 
 sfx.correct.volume = 0.3;
 sfx.incorrect.volume = 0.08;
@@ -58,6 +58,7 @@ var start = function (info) {
 
 
     $('.start-btn').addClass('hidden');
+    $('.text-container').removeClass('hidden');
 
     updateBombState();
     updatePlayersState();
@@ -93,16 +94,17 @@ var addPlayers = function(newPlayers) {
         let entrance = entranceAnimations[Math.floor(Math.random()*entranceAnimations.length)];
         let x = centerX + (r * Math.cos(i * angle)); // x = x_0 + r cos(t)
         let y = centerY + (r * Math.sin(i * angle)); // y = y_0 + r sen(t)
-        let player = $("<div>").addClass("player animate__animated "+entrance).css({
+        let player = $("<div>").addClass("player animate__animated animate__"+entrance).css({
             left: (x - (playerDim/2)) + "px",
             top: (y - (playerDim/2)) + "px"
         });
         player.append('<p class="player-name">' + players[i].name + '</p>');
         player.append('<p class="player-lives">'+ `${liveIcon.repeat(players[i].lives)}` +'</p>');
+        player.append('<p class="player-text" id="player' + i + '"></p>');
         $(".board-container").append(player);
         animateCSS(player, entrance);
         players[i].div = player;
-        // players[i].div.removeClass('animate__animated animate__bounceIn');
+        //players[i].div.removeClass("animate__animated "+entrance);
     }
 
     arrow = $('.arrow');
@@ -119,7 +121,7 @@ var addPlayers = function(newPlayers) {
     console.log( players[0].name == me);
     if (players[0].name == me) {
         $('.start-btn').removeClass('hidden');
-        $('.start-btn').addClass('animate__animated animate__fadeIn');
+        //$('.start-btn').addClass('animate__animated animate__fadeIn');
     }
 }
 
@@ -210,6 +212,17 @@ var updateInputState = function() {
 }
 
 
+var refreshText = function (text) {
+    $('#player'+currentPlayer).text(text.replace('"', '').replace('"', ''));
+    let ocurrences = text.toUpperCase().indexOf(syllable.toUpperCase());
+    console.log('ocurrences :>> ', ocurrences);
+    if (ocurrences !== -1) {
+        $('#player'+currentPlayer).html((text.substring(0, ocurrences)+'<b>' + syllable.toUpperCase() + '</b>' + text.substring(ocurrences+syllable.length)
+        ).replace('"', '').replace('"', ''));
+    }
+}
+
+
 /**
  * Actualiza la visualización de la bomba y la sílaba actual
  */
@@ -225,6 +238,7 @@ var updateBombState = function() {
 var wrongAnswer = function () {
     sfx.incorrect.play();
     animateCSS(players[currentPlayer].div, 'headShake');
+    $('.input-text').val('');
 }
 
 
@@ -246,6 +260,7 @@ const animateCSS = (div, animation, prefix = 'animate__') =>
     function handleAnimationEnd(event) {
       event.stopPropagation();
       div.removeClass(`${prefix}animated` + ' ' + animationName);
+      console.log('removed :>> ', `${prefix}animated`, animationName);
       resolve('Animation ended');
     }
 

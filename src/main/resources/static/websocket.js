@@ -32,14 +32,23 @@ var websocket = (function() {
                 console.log('eventbody.body :>> ', JSON.parse(eventbody.body));
                 addPlayers(JSON.parse(eventbody.body));
             });
+
+            stompClient.subscribe('/rooms/text/'+room, function (eventbody) {
+                console.log('eventbody.body :>> ', JSON.parse(eventbody.body));
+                letter.textContent = eventbody.body;
+                refreshText(eventbody.body);
+            });
             
             stompClient.subscribe('/rooms/party/'+room, function (eventbody) {
                 let msg = JSON.parse(eventbody.body);
-                if (msg.correct == "") {
+                if (msg.correct === "") {
+                    console.log("start");
                     start(msg);
                 } else if (msg.correct) {
+                    console.log('correct');
                     rotateArrow(msg);
                 } else if (!msg.correct) {
+                    console.log('incorrect');
                     wrongAnswer();
                 }
             });
@@ -58,7 +67,7 @@ var websocket = (function() {
                         // check word
                         console.log("Mirar validez de la palabra");
                     }
-                    stompClient.send("/app/rooms/waiting-room/"+room, {}, JSON.stringify(word));
+                    stompClient.send("/app/rooms/text/"+room, {}, JSON.stringify(word));
                 });
             }
         },
