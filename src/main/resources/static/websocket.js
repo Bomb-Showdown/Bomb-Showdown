@@ -28,9 +28,29 @@ var websocket = (function() {
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
             var letter = document.getElementById("word-ws");
-            stompClient.subscribe('/rooms/'+room, function (eventbody) {
-                console.log(letter);
+            stompClient.subscribe('/rooms/waiting-room/'+room, function (eventbody) {
+                console.log('eventbody.body :>> ', JSON.parse(eventbody.body));
+                addPlayers(JSON.parse(eventbody.body));
+            });
+
+            stompClient.subscribe('/rooms/text/'+room, function (eventbody) {
+                console.log('eventbody.body :>> ', JSON.parse(eventbody.body));
                 letter.textContent = eventbody.body;
+                refreshText(eventbody.body);
+            });
+            
+            stompClient.subscribe('/rooms/party/'+room, function (eventbody) {
+                let msg = JSON.parse(eventbody.body);
+                if (msg.correct === "") {
+                    console.log("start");
+                    start(msg);
+                } else if (msg.correct) {
+                    console.log('correct');
+                    rotateArrow(msg);
+                } else if (!msg.correct) {
+                    console.log('incorrect');
+                    wrongAnswer();
+                }
             });
         });
     };
@@ -47,7 +67,7 @@ var websocket = (function() {
                         // check word
                         console.log("Mirar validez de la palabra");
                     }
-                    stompClient.send("/app/rooms/"+room, {}, JSON.stringify(word));
+                    stompClient.send("/app/rooms/text/"+room, {}, JSON.stringify(word));
                 });
             }
         },
@@ -61,6 +81,12 @@ var websocket = (function() {
         },
 
         connection : function(code) {
+            $.ajax({
+                type: "POST",
+                url: "/games/rooms/"+code,
+                data: "data",
+                contentType: "text/html"
+            });
             connectAndSubscribe(code);
         },
 
@@ -71,14 +97,22 @@ var websocket = (function() {
                 data: player,
                 contentType: "text/html"
             });
+            me = player;
         },
 
         checkWord : function(word) {
             $.ajax({
                 type: "POST",
-                url: "/games/rooms/"+room,
+                url: "/games/rooms/"+room+"/word",
                 data: word,
                 contentType: "text/html"
+            });
+        },
+
+        startGame: function() {
+            $.ajax({
+                type: "POST",
+                url: "/games/rooms/"+room+"/start"
             });
         }
     };

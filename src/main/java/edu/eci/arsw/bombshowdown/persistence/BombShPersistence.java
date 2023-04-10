@@ -30,6 +30,8 @@ public interface BombShPersistence {
 
     public void killPlayer();
 
+    public void start();
+
     public Player getCurrentPlayer();
 
     public void updateLifes(String name);

@@ -32,42 +32,73 @@ public class STOMPMessagesController {
 
     Map<String, BombShPersistence> rooms = new ConcurrentHashMap<>();
 
-    @MessageMapping("/rooms/{room}")
+    @MessageMapping("/rooms/waiting-room/{room}")
     public void messagesHandler(String word, @DestinationVariable String room) throws Exception {
-        msgt.convertAndSend("/rooms/"+room, word);
+        msgt.convertAndSend("/rooms/waiting-room/"+room, word);
+    }
+
+    @MessageMapping("/rooms/text/{room}")
+    public void textHandler(String word, @DestinationVariable String room) throws Exception {
+        msgt.convertAndSend("/rooms/text/"+room, word);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/rooms/{room}/players", consumes = "text/html")
     public ResponseEntity<?> handlerPutResource(@PathVariable String room, @RequestBody String player) {
-        System.out.println(player);
-        BombShPersistence game = rooms.get(room);
-        game.addPlayer(player);
-        System.out.println(game);
-        msgt.convertAndSend("/rooms/"+room, game.getPlayers());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        if (rooms.containsKey(room)) {
+            System.out.println(player);
+            BombShPersistence game = rooms.get(room);
+            game.addPlayer(player);
+            System.out.println(game);
+            msgt.convertAndSend("/rooms/waiting-room/"+room, game.getPlayers());
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}/word", consumes = "text/html")
     public ResponseEntity<?> handlerPostResource(@PathVariable String room, @RequestBody String word) {
         try {
             BombShPersistence game = rooms.get(room);
             Gson gson = new Gson();
             JsonObject json = new JsonObject();
-            json.addProperty("correct", game.checkWord(word));
+            json.addProperty("correct", game.checkWord(word.toLowerCase()));
             json.addProperty("syllable", game.getSyllable());
             json.addProperty("player", game.getCurrentPlayer().getName());
-            msgt.convertAndSend("/rooms/"+room, gson.toJson(json));
+            System.out.println("/parties/"+room + gson.toJson(json));
+            msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
+            return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}", consumes = "application/json")
-    public ResponseEntity<?> handlerPostResourceRoom(@PathVariable String room, @RequestBody String word) {
+    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}/start")
+    public ResponseEntity<?> handlerStart(@PathVariable String room) {
+        BombShPersistence game = rooms.get(room);
+        Gson gson = new Gson();
+        JsonObject json = new JsonObject();
+        json.addProperty("correct", "");
+        json.addProperty("syllable", game.getSyllable());
+        json.addProperty("player", game.getCurrentPlayer().getName());
+        System.out.println("/parties/"+room + gson.toJson(json));
+        msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
+        return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
+
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}")
+    public ResponseEntity<?> handlerPostResourceRoom(@PathVariable String room) {
         if (!rooms.containsKey(room)) {
             rooms.put(room, new BombShPersistenceImpl());
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 }
