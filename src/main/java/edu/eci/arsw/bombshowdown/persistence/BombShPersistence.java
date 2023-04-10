@@ -33,7 +33,7 @@ public interface BombShPersistence {
 
     public Player getCurrentPlayer();
 
-    public void updateLifes(String name);
+    public void updateLives(String name);
 
     void play(long t0) throws IOException;
 }

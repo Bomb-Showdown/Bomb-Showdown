@@ -23,11 +23,7 @@ public class Main {
         bs.setBombTimer();
         bs.setSyllable();
 
-
-        System.out.println(bs.getCurrentPlayer());
-        System.out.println(bs);
-        System.out.println(bs.checkWord("auditorio"));
-        System.out.println(bs);
+        bs.play(System.currentTimeMillis());
 
 
     }

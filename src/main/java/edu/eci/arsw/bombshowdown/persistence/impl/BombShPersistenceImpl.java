@@ -57,8 +57,6 @@ public class BombShPersistenceImpl implements BombShPersistence {
         JLanguageTool langTool = new JLanguageTool(new Spanish());
         List<RuleMatch> matches = langTool.check(word);
 
-        System.out.println(matches);
-
         if(matches.isEmpty() && word.contains(currentSyllable)){
             flag = true;
             this.nextPlayer();
@@ -138,7 +136,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
-    public void updateLifes(String name) {
+    public void updateLives(String name) {
         for(Player player:players){
             if(player.getName().equals(name)){
                 player.setLives(player.getLives());
@@ -149,19 +147,15 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public void play(long t0) throws IOException {
 
-        Timer timer = new Timer();
-
         boolean correct = false;
-
-        long t1 = getBombTimer();
 
         long start = System.currentTimeMillis();
 
-        long end = start + 100 * 1000;
+        long end = start + 10 * 1000;
 
-//        System.out.println("bomb timer = " + t1 * 1000);
+        while (!correct && System.currentTimeMillis() < end) {
 
-        while (!correct && System.currentTimeMillis() < end || !correct){
+            System.out.println("La silaba actual es -> " + currentSyllable);
 
             Scanner myObj = new Scanner(System.in);  // Create a Scanner object
             System.out.println("Introduzca Palabra");
@@ -170,10 +164,14 @@ public class BombShPersistenceImpl implements BombShPersistence {
             System.out.println("word introduced is: " + word);  // Output user input
             if (checkWord(word)) {
                 correct = true;
+                nextPlayer();
+                System.out.println("Palabra correcta, turno siguiente jugador");
             }
 
 
         }
+
+        bombExplodes();
 
     }
 
