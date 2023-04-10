@@ -34,23 +34,22 @@ public class STOMPMessagesController {
 
     @MessageMapping("/rooms/{room}")
     public void messagesHandler(String word, @DestinationVariable String room) throws Exception {
-        if (!rooms.containsKey(room)) {
-            rooms.put(room, new BombShPersistenceImpl());
-        }
         msgt.convertAndSend("/rooms/"+room, word);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/rooms/{room}/players", consumes = "text/html")
     public ResponseEntity<?> handlerPutResource(@PathVariable String room, @RequestBody String player) {
-        if (!rooms.containsKey(room)) {
-            rooms.put(room, new BombShPersistenceImpl());
+        if (rooms.containsKey(room)) {
+            System.out.println(player);
+            BombShPersistence game = rooms.get(room);
+            game.addPlayer(player);
+            System.out.println(game);
+            msgt.convertAndSend("/rooms/"+room, game.getPlayers());
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        System.out.println(player);
-        BombShPersistence game = rooms.get(room);
-        game.addPlayer(player);
-        System.out.println(game);
-        msgt.convertAndSend("/rooms/"+room, game.getPlayers());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}/word", consumes = "text/html")
@@ -67,17 +66,20 @@ public class STOMPMessagesController {
             return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
 
         } catch (IOException e) {
-//            throw new RuntimeException(e);
-            return new ResponseEntity<>(HttpStatus.OK);
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-//    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}", consumes = "application/json")
-//    public ResponseEntity<?> handlerPostResourceRoom(@PathVariable String room, @RequestBody String word) {
-//        if (!rooms.containsKey(room)) {
-//            rooms.put(room, new BombShPersistenceImpl());
-//        }
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}")
+    public ResponseEntity<?> handlerPostResourceRoom(@PathVariable String room) {
+        if (!rooms.containsKey(room)) {
+            rooms.put(room, new BombShPersistenceImpl());
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+    }
 }
