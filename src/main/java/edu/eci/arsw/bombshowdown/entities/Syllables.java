@@ -3,12 +3,13 @@ package edu.eci.arsw.bombshowdown.entities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class Syllables {
 
     private static Syllables instance;
 
-    List<String> syllablesList = Arrays.asList("a", "ab", "c", "d");
+    List<String> syllablesList = Arrays.asList("aud", "ar", "po", "mi");
 
     ArrayList<String> syllables = new ArrayList<>(syllablesList);
 
@@ -16,6 +17,10 @@ public class Syllables {
         return syllables;
     }
 
+    public String getRandomSyllable() {
+        Random random = new Random();
+        return syllables.get(random.nextInt(syllables.size()));
+    }
 
     public static Syllables getInstance(){
 

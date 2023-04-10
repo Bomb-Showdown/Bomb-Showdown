@@ -30,25 +30,23 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     public BombShPersistenceImpl(){
         syllables = syllablesInstance.getSyllables();
-    }
-
-    @Override
-    public void setSyllable() {
-
-        int max = syllables.size() - 1;
-        int min = 0;
-        int range = max - min + 1;
-        int number = (int)(Math.random() * range) + min;
-
-        currentSyllable = syllables.get(number);
-
-        System.out.println("la silaba a jugar es: -> " + currentSyllable);
-
+        currentSyllable = syllables.get(0);
     }
 
     @Override
     public void deleteSyllable(String syllabe) {
 
+    }
+
+    @Override
+    public void setSyllable() {
+        currentSyllable = syllablesInstance.getRandomSyllable();
+        //System.out.println(currentSyllable);
+    }
+
+    @Override
+    public String getSyllable() {
+        return currentSyllable;
     }
 
     @Override
@@ -63,6 +61,8 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
         if(matches.isEmpty() && word.contains(currentSyllable)){
             flag = true;
+            this.nextPlayer();
+            this.setSyllable();
         }
 
         return flag;
@@ -175,5 +175,16 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "BombShPersistenceImpl{" +
+                "players=" + players +
+                ", currentPlayer=" + currentPlayer +
+                ", bombTimer=" + bombTimer +
+                ", currentSyllable='" + currentSyllable +
+                ", syllables=" + syllables +
+                '}';
     }
 }

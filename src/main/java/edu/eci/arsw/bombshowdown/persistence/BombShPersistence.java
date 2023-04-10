@@ -9,10 +9,11 @@ import java.util.Set;
 
 public interface BombShPersistence {
 
-
-    void setSyllable();
-
     public void deleteSyllable(String syllabe);
+
+    public void setSyllable();
+
+    String getSyllable();
 
     boolean checkWord(String word) throws IOException;
 

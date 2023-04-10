@@ -24,9 +24,11 @@ public class Main {
         bs.setSyllable();
 
 
-        long t0 = System.currentTimeMillis();
+        System.out.println(bs.getCurrentPlayer());
+        System.out.println(bs);
+        System.out.println(bs.checkWord("auditorio"));
+        System.out.println(bs);
 
-        bs.play(t0);
 
     }
 }
