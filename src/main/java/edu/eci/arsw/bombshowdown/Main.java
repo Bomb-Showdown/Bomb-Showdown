@@ -21,41 +21,12 @@ public class Main {
         bs.addPlayer("kalo");
 
         bs.setBombTimer();
-
-        // funciona next player falta que no recorra los que no tienen vidas
-
-        System.out.println(bs.getCurrentPlayer().getName());
-        bs.nextPlayer();
-        System.out.println(bs.getCurrentPlayer().getName());
-        bs.nextPlayer();
-        System.out.println(bs.getCurrentPlayer().getName());
-        bs.nextPlayer();
-        System.out.println(bs.getCurrentPlayer().getName());
-        bs.nextPlayer();
-        System.out.println(bs.getCurrentPlayer().getName());
-        bs.nextPlayer();
-        System.out.println(bs.getCurrentPlayer().getName());
-        bs.nextPlayer();
-        System.out.println(bs.getCurrentPlayer().getName());
+        bs.setSyllable();
 
 
-        int t0 = (int) System.currentTimeMillis();
-        int t1 = t0 + bs.getBombTimer();
+        long t0 = System.currentTimeMillis();
 
-        Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-        System.out.println("Introduzca Palabra");
-
-        String word = myObj.nextLine();  // Read user input
-        System.out.println("word introduced is: " + word);  // Output user input
-
-        // Deberia checkear la palabra pero esta fallando algo no se el que
-
-        JLanguageTool langTool = new JLanguageTool(new Spanish());
-        List<RuleMatch> matches = langTool.check(word);
-        System.out.println(matches + "the current syllable is: " + bs.getSyllable());
-
-
-        bs.play(word, t0, t1);
+        bs.play(t0);
 
     }
 }

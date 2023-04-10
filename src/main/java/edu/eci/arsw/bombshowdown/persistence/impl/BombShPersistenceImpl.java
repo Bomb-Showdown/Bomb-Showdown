@@ -10,6 +10,8 @@ import org.languagetool.rules.RuleMatch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.Timer;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BombShPersistenceImpl implements BombShPersistence {
@@ -31,16 +33,16 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
-    public String getSyllable() {
+    public void setSyllable() {
 
-        int max = syllables.size();
+        int max = syllables.size() - 1;
         int min = 0;
         int range = max - min + 1;
         int number = (int)(Math.random() * range) + min;
 
         currentSyllable = syllables.get(number);
 
-        return syllables.get(number);
+        System.out.println("la silaba a jugar es: -> " + currentSyllable);
 
     }
 
@@ -56,8 +58,10 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
         JLanguageTool langTool = new JLanguageTool(new Spanish());
         List<RuleMatch> matches = langTool.check(word);
-        System.out.println(matches + "the current syllable is: " + currentSyllable);
-        if(!matches.isEmpty() && word.contains(currentSyllable)){
+
+        System.out.println(matches);
+
+        if(matches.isEmpty() && word.contains(currentSyllable)){
             flag = true;
         }
 
@@ -90,21 +94,18 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public void nextPlayer() {
 
-//        boolean alive = false;
-//        int i = currentPlayer + 1;
-//        int jumps = 0;
-//
-//        while (!alive){
-//            if (players.get(i).getLives() == 0){
-//                jumps += 1;
-//            }
-//            else alive = true;
-//            i = (i + 1) % players.size();
-//            currentPlayer = (currentPlayer + 1) % players.size();
-//        }
+        boolean alive = false;
+        int i = currentPlayer + 1;
 
-        if(currentPlayer + 1  > players.size() - 1) currentPlayer = 0;
-        else currentPlayer += 1;
+        while (!alive){
+            if (players.get(i).getLives() == 0){
+                i += 1;
+            }
+            else alive = true;
+        }
+
+        currentPlayer = i;
+
         getCurrentPlayer();
 
     }
@@ -146,13 +147,33 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
-    public void play(String word, int t0, int t1) throws IOException {
+    public void play(long t0) throws IOException {
+
+        Timer timer = new Timer();
+
         boolean correct = false;
-        int end = t0 + t1;
-        while (!correct && System.currentTimeMillis() < end){
+
+        long t1 = getBombTimer();
+
+        long start = System.currentTimeMillis();
+
+        long end = start + 100 * 1000;
+
+//        System.out.println("bomb timer = " + t1 * 1000);
+
+        while (!correct && System.currentTimeMillis() < end || !correct){
+
+            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+            System.out.println("Introduzca Palabra");
+
+            String word = myObj.nextLine();  // Read user input
+            System.out.println("word introduced is: " + word);  // Output user input
             if (checkWord(word)) {
                 correct = true;
             }
+
+
         }
+
     }
 }

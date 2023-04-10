@@ -9,7 +9,8 @@ import java.util.Set;
 
 public interface BombShPersistence {
 
-    public String getSyllable();
+
+    void setSyllable();
 
     public void deleteSyllable(String syllabe);
 
@@ -33,6 +34,5 @@ public interface BombShPersistence {
 
     public void updateLifes(String name);
 
-
-    void play(String word, int t0, int t1) throws IOException;
+    void play(long t0) throws IOException;
 }
