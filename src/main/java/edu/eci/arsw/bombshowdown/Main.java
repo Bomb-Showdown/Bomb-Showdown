@@ -14,16 +14,30 @@ public class Main {
 
         BombShPersistenceImpl bs = new BombShPersistenceImpl();
 
-        bs.addPlayer("ernesto");
-        bs.addPlayer("julian");
         bs.addPlayer("andres");
+        bs.addPlayer("julian");
         bs.addPlayer("juan pablo");
-        bs.addPlayer("kalo");
+//        System.out.println(bs.getPlayers());
 
-        bs.setBombTimer();
-        bs.setSyllable();
+//        TEST ROTACION ENTRE VIVOS
+//        bs.nextPlayer(); // julian
+//
+//        bs.nextPlayer(); // juan pablo
+//
+//        bs.nextPlayer(); // andres
+//
+//        bs.bombExplodes(); // -1 vida
+//
+//        bs.nextPlayer(); // julian
+//
+//        bs.nextPlayer(); // juan pablo
+//
+//        bs.nextPlayer(); // deberia ser julian pq andres murio
+//
+//        bs.setBombTimer();
+//        bs.setSyllable();
 
-        bs.play(System.currentTimeMillis());
+        // bs.play(System.currentTimeMillis());
 
 
     }

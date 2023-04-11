@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Timer;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BombShPersistenceImpl implements BombShPersistence {
@@ -94,8 +93,14 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public void nextPlayer() {
 
+        getCurrentPlayer();
+
         boolean alive = false;
         int i = currentPlayer + 1;
+
+        if(i > players.size() - 1){
+            i = 0;
+        }
 
         while (!alive){
             if (players.get(i).getLives() == 0){
@@ -108,23 +113,16 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
         getCurrentPlayer();
 
+        System.out.println("-----------------------");
+
     }
 
     @Override
     public void addPlayer(String name) {
 
-//        for(Player player:players){
-//            if(!players.isEmpty() & player.getName().equals(name)){
-//                System.out.println("player name already exists, try another");
-//            }
-//            else {
-//                Player newPlayer= new Player(name, 1);
-//                players.add(newPlayer);
-//            }
-//        }
-
         Player newPlayer= new Player(name, 1);
         players.add(newPlayer);
+
     }
 
     @Override
@@ -139,6 +137,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     @Override
     public Player getCurrentPlayer() {
+        System.out.println(players.get(currentPlayer));
         return players.get(currentPlayer);
     }
 
@@ -175,9 +174,9 @@ public class BombShPersistenceImpl implements BombShPersistence {
                 System.out.println("Palabra correcta, turno siguiente jugador");
             }
 
-
         }
 
+        correct = false;
         bombExplodes();
 
     }
