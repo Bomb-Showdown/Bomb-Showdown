@@ -39,9 +39,14 @@ public class STOMPMessagesController {
         msgt.convertAndSend("/rooms/waiting-room/"+room, word);
     }
 
-    @MessageMapping("/rooms/text/{room}")
-    public void textHandler(String word, @DestinationVariable String room) throws Exception {
-        msgt.convertAndSend("/rooms/text/"+room, word);
+    @MessageMapping("/rooms/text/{room}/player/{player}")
+    public void textHandler(String word, @DestinationVariable String room, @DestinationVariable String player) throws Exception {
+        Gson gson = new Gson();
+        JsonObject json = new JsonObject();
+        BombShPersistence game = rooms.get(room);
+        json.addProperty("player", game.find(player).getId());
+        json.addProperty("word", word);
+        msgt.convertAndSend("/rooms/text/"+room, gson.toJson(json));
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/rooms/{room}/players", consumes = "text/html")

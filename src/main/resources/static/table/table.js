@@ -213,12 +213,15 @@ var updateInputState = function() {
 }
 
 
-var refreshText = function (text) {
-    $('#player'+currentPlayer).text(text.replace('"', '').replace('"', ''));
+var refreshText = function (info) {
+    let text = info.word;
+    let who = info.player;
+    console.log('info :>> ', info);
+    $('#player'+who).text(text.replace('\"', '').replace('\"', ''));
     let ocurrences = text.toUpperCase().indexOf(syllable.toUpperCase());
     console.log('ocurrences :>> ', ocurrences);
     if (ocurrences !== -1) {
-        $('#player'+currentPlayer).html((text.substring(0, ocurrences)+'<b>' + syllable.toUpperCase() + '</b>' + text.substring(ocurrences+syllable.length)
+        $('#player'+who).html((text.substring(0, ocurrences)+'<b>' + syllable.toUpperCase() + '</b>' + text.substring(ocurrences+syllable.length)
         ).replace('"', '').replace('"', ''));
     }
 }
@@ -300,8 +303,6 @@ const animateCSS = (div, animation, prefix = 'animate__') =>
 
 function activateInput() {
     var input = document.querySelector(".input-text");
-
-    // Execute a function when the user presses a key on the keyboard
     input.addEventListener("keypress", pressEnter);
 }
 

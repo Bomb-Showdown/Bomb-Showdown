@@ -22,8 +22,8 @@ var websocket = (function() {
 
             stompClient.subscribe('/rooms/text/'+room, function (eventbody) {
                 console.log('eventbody.body :>> ', JSON.parse(eventbody.body));
-                letter.textContent = eventbody.body;
-                refreshText(eventbody.body);
+                letter.textContent = JSON.parse(eventbody.body);
+                refreshText(JSON.parse(eventbody.body));
             });
             
             stompClient.subscribe('/rooms/party/'+room, function (eventbody) {
@@ -70,7 +70,7 @@ var websocket = (function() {
                         // check word
                         //console.log("Mirar validez de la palabra");
                     }
-                    stompClient.send("/app/rooms/text/"+room, {}, JSON.stringify(word));
+                    stompClient.send("/app/rooms/text/"+room+'/player/'+me, {}, JSON.stringify(word));
                     
                 });
             }
