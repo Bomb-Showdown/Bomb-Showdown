@@ -55,6 +55,7 @@ var start = function (info) {
     $('.arrow').css({
         'transform': 'translate(-50%, -50%)' + 'rotate(' + (arrowAngle) + 'deg)'
     });
+    activateInput();
 
 
     $('.start-btn').addClass('hidden');
@@ -130,11 +131,11 @@ var addPlayers = function(newPlayers) {
  * Hace rotar la flecha central hacia el siguiente jugador
  * @param {*} info objeto con información sobre el estado actual del juego
  */
-var rotateArrow = function(info) {
+var rotateArrow = function(info, who = currentPlayer) {
     //animateCSS(players[currentPlayer].div, 'headShake');
-    animateCSS(players[currentPlayer].div, 'rotateCenter');
+    animateCSS(players[who].div, 'rotateCenter');
     
-    arrowAngle += degreeAngle + degreeAngle*nextAlive();
+    arrowAngle += degreeAngle + degreeAngle*nextAlive(info.player);
     console.log('currentPlayer :>> ', currentPlayer);
 
     arrow.css({
@@ -156,14 +157,14 @@ var rotateArrow = function(info) {
  * Calcula el número de saltos desde el jugador actual hasta el siguiente jugador vivo
  * @returns número de saltos
  */
-var nextAlive = function() {
+var nextAlive = function(nextPlayer) {
     let scape = false;
     let i = (currentPlayer + 1) % players.length;
     let jumps = 0;
     players[currentPlayer].div.css("outline", "0px solid white");
     players[currentPlayer].div.css("box-shadow", "0px 0px 10px 1px rgba(0, 0, 0 , .20)");
     while (!scape) {
-        if (players[i].lives <= 0) {
+        if (players[i].name != nextPlayer) {
             jumps++;
         } else {
             scape = true;
@@ -212,12 +213,15 @@ var updateInputState = function() {
 }
 
 
-var refreshText = function (text) {
-    $('#player'+currentPlayer).text(text.replace('"', '').replace('"', ''));
+var refreshText = function (info) {
+    let text = info.word;
+    let who = info.player;
+    console.log('info :>> ', info);
+    $('#player'+who).text(text.replace('\"', '').replace('\"', ''));
     let ocurrences = text.toUpperCase().indexOf(syllable.toUpperCase());
     console.log('ocurrences :>> ', ocurrences);
     if (ocurrences !== -1) {
-        $('#player'+currentPlayer).html((text.substring(0, ocurrences)+'<b>' + syllable.toUpperCase() + '</b>' + text.substring(ocurrences+syllable.length)
+        $('#player'+who).html((text.substring(0, ocurrences)+'<b>' + syllable.toUpperCase() + '</b>' + text.substring(ocurrences+syllable.length)
         ).replace('"', '').replace('"', ''));
     }
 }
@@ -235,10 +239,40 @@ var updateBombState = function() {
 /**
  * Anima al jugador en caso de introducir una palabra erronea
  */
-var wrongAnswer = function () {
+var wrongAnswer = function (who = currentPlayer) {
     sfx.incorrect.play();
-    animateCSS(players[currentPlayer].div, 'headShake');
+    animateCSS(players[who].div, 'headShake');
     $('.input-text').val('');
+}
+
+
+/**
+ * 
+ */
+var startBonus = function (info) {
+    $('.arrow').addClass('bonus-arrow');
+    $('body').addClass('bonus-body');
+    $('.input-text').css('display', 'block');
+    $('.input-text').val('');
+    $('.current-player').css('display', 'none');
+    syllable = info.syllable != "" ? info.syllable : syllable;
+    updateBombState();
+    var input = document.querySelector(".input-text");
+    input.removeEventListener('keypress', pressEnter);
+    input.addEventListener('keypress', pressEnterBonus);
+}
+
+
+/**
+ * 
+ */
+var endBonus = function (info) {
+    $('.arrow').removeClass('bonus-arrow');
+    $('body').removeClass('bonus-body');
+    var input = document.querySelector(".input-text");
+    input.removeEventListener('keypress', pressEnterBonus);
+    input.addEventListener('keypress', pressEnter);
+    rotateArrow(info, info.candidate);
 }
 
 
@@ -267,19 +301,29 @@ const animateCSS = (div, animation, prefix = 'animate__') =>
     div.one('animationend', handleAnimationEnd);
   });
 
+function activateInput() {
+    var input = document.querySelector(".input-text");
+    input.addEventListener("keypress", pressEnter);
+}
+
+function pressEnter(event) {
+    // If the user presses the "Enter" key on the keyboard
+    if (event.key === "Enter") {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      websocket.checkWord($(".input-text").val());
+    }
+}
 
 
-var input = document.querySelector(".input-text");
-
-// Execute a function when the user presses a key on the keyboard
-input.addEventListener("keypress", function(event) {
-  // If the user presses the "Enter" key on the keyboard
-  if (event.key === "Enter") {
-    // Cancel the default action, if needed
-    event.preventDefault();
-    websocket.checkWord($(".input-text").val(), rotateArrow);
-  }
-});
+function pressEnterBonus(event) {
+    // If the user presses the "Enter" key on the keyboard
+    if (event.key === "Enter") {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      websocket.checkBonusWord($(".input-text").val());
+    }
+}
 
 
 function upperCaseF(a){

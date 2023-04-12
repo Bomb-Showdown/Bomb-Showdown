@@ -2,20 +2,7 @@ var websocket = (function() {
 
     var stompClient =null;
     var room = null;
-    var player1 = {"name": "Andrés",
-                "lives": 3};
-    var player2 = {"name": "Juanpa",
-                "lives": 3};
-    var player3 = {"name": "Julián",
-                "lives": 3};
-    var player4 = {"name": "Vladimir",
-                "lives": 0};
-    var player5 = {"name": "Bob",
-                "lives": 3};
-    var players = [player1, player2, player3, player4, player5];
     var word = "";
-    var syllable = null;
-    var currentPlayer = null;
 
     function connectAndSubscribe(code) {
         if (stompClient !== null) {
@@ -35,8 +22,8 @@ var websocket = (function() {
 
             stompClient.subscribe('/rooms/text/'+room, function (eventbody) {
                 console.log('eventbody.body :>> ', JSON.parse(eventbody.body));
-                letter.textContent = eventbody.body;
-                refreshText(eventbody.body);
+                letter.textContent = JSON.parse(eventbody.body);
+                refreshText(JSON.parse(eventbody.body));
             });
             
             stompClient.subscribe('/rooms/party/'+room, function (eventbody) {
@@ -52,6 +39,22 @@ var websocket = (function() {
                     wrongAnswer();
                 }
             });
+
+            stompClient.subscribe('/rooms/bonus/'+room, function (eventbody) {
+                console.log('bonus :>> ', JSON.parse(eventbody.body));
+                let msg = JSON.parse(eventbody.body);
+                if (msg.begin) {
+                    rotateArrow(msg);
+                    startBonus(msg);
+                } else if (msg.correct) {
+                    players[msg.candidate].lives += msg.won;
+                    endBonus(msg);
+                } else if (!msg.correct) {
+                    console.log('bonus incorrect');
+                    wrongAnswer(msg.candidate);
+                }
+                // habilitar inputs a todos
+            });
         });
     };
 
@@ -65,9 +68,10 @@ var websocket = (function() {
                     word = $("#input").val();
                     if (key === 'Enter') {
                         // check word
-                        console.log("Mirar validez de la palabra");
+                        //console.log("Mirar validez de la palabra");
                     }
-                    stompClient.send("/app/rooms/text/"+room, {}, JSON.stringify(word));
+                    stompClient.send("/app/rooms/text/"+room+'/player/'+me, {}, JSON.stringify(word));
+                    
                 });
             }
         },
@@ -104,6 +108,15 @@ var websocket = (function() {
             $.ajax({
                 type: "POST",
                 url: "/games/rooms/"+room+"/word",
+                data: word,
+                contentType: "text/html"
+            });
+        },
+
+        checkBonusWord : function(word) {
+            $.ajax({
+                type: "POST",
+                url: "/games/rooms/"+room+"/players/"+me+"/bonus",
                 data: word,
                 contentType: "text/html"
             });
