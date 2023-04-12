@@ -16,6 +16,10 @@ public interface BombShPersistence {
 
     boolean checkWord(String word) throws IOException;
 
+    boolean checkBonusWord() throws IOException;
+
+    public void addQueue(String player, String word);
+
     public List<Player> getPlayers();
 
     public int getBombTimer();

@@ -2,6 +2,7 @@ package edu.eci.arsw.bombshowdown.persistence.impl;
 
 import edu.eci.arsw.bombshowdown.entities.Player;
 import edu.eci.arsw.bombshowdown.entities.Syllables;
+import edu.eci.arsw.bombshowdown.entities.Tuple;
 import edu.eci.arsw.bombshowdown.persistence.BombShPersistence;
 import org.languagetool.JLanguageTool;
 import org.languagetool.language.Spanish;
@@ -10,6 +11,7 @@ import org.languagetool.rules.RuleMatch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BombShPersistenceImpl implements BombShPersistence {
@@ -26,7 +28,13 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     private final ArrayList<String> syllables;
 
+    JLanguageTool langTool = new JLanguageTool(new Spanish());
+
     private boolean started = false;
+
+    private boolean bonusWinner = false;
+
+    private ConcurrentLinkedQueue<Tuple<String, String>> queue = new ConcurrentLinkedQueue<>();
 
     public BombShPersistenceImpl(){
         syllables = syllablesInstance.getSyllables();
@@ -63,8 +71,6 @@ public class BombShPersistenceImpl implements BombShPersistence {
     public boolean checkWord(String word) throws IOException {
 
         boolean flag = false;
-
-        JLanguageTool langTool = new JLanguageTool(new Spanish());
         List<RuleMatch> matches = langTool.check(word);
         System.out.println(matches + "the current syllable is: " + currentSyllable);
         if(matches.isEmpty() && word.contains(currentSyllable)){
@@ -74,6 +80,26 @@ public class BombShPersistenceImpl implements BombShPersistence {
         }
 
         return flag;
+    }
+
+    @Override
+    public boolean checkBonusWord() throws IOException {
+        if (!bonusWinner) {
+            Tuple<String, String> turn = queue.poll();
+            List<RuleMatch> matches = langTool.check(turn.getElem2());
+            System.out.println(matches + "the current syllable is: " + currentSyllable);
+            if(matches.isEmpty() && turn.getElem2().contains(currentSyllable)){
+                System.out.println("Bonus winner: " + turn.getElem1());
+                bonusWinner = true;
+                queue.clear();
+            }
+        }
+        return bonusWinner;
+    }
+
+    @Override
+    public void addQueue(String player, String word) {
+        queue.add(new Tuple<>(player, word));
     }
 
     @Override

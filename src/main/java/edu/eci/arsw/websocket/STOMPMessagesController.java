@@ -32,6 +32,8 @@ public class STOMPMessagesController {
 
     Map<String, BombShPersistence> rooms = new ConcurrentHashMap<>();
 
+    int bonusRounds = 0;
+
     @MessageMapping("/rooms/waiting-room/{room}")
     public void messagesHandler(String word, @DestinationVariable String room) throws Exception {
         msgt.convertAndSend("/rooms/waiting-room/"+room, word);
@@ -67,7 +69,34 @@ public class STOMPMessagesController {
             json.addProperty("syllable", game.getSyllable());
             json.addProperty("player", game.getCurrentPlayer().getName());
             System.out.println("/parties/"+room + gson.toJson(json));
-            msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
+            if (bonusRounds == 5) {
+                bonusRounds = 0;
+                // comienza ronda bonus
+            } else {
+                bonusRounds++;
+                msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
+            }
+            return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}/players/{me}/bonus", consumes = "text/html")
+    public ResponseEntity<?> handlerPostResourceBonus(@PathVariable String room, @PathVariable String me, @RequestBody String word) {
+        try {
+            BombShPersistence game = rooms.get(room);
+            game.addQueue(me, word);
+            Gson gson = new Gson();
+            JsonObject json = new JsonObject();
+            json.addProperty("correct", game.checkBonusWord());
+            json.addProperty("syllable", game.getSyllable());
+            json.addProperty("player", "");
+            System.out.println("/parties/"+room + gson.toJson(json));
+            msgt.convertAndSend("/rooms/bonus/"+room, gson.toJson(json));
             return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
 
         } catch (IOException e) {
