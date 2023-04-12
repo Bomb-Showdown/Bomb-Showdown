@@ -41,7 +41,18 @@ var websocket = (function() {
             });
 
             stompClient.subscribe('/rooms/bonus/'+room, function (eventbody) {
-                console.log('eventbody.body :>> ', JSON.parse(eventbody.body));
+                console.log('bonus :>> ', JSON.parse(eventbody.body));
+                let msg = JSON.parse(eventbody.body);
+                if (msg.begin) {
+                    rotateArrow(msg);
+                    startBonus(msg);
+                } else if (msg.correct) {
+                    players[msg.candidate].lives += msg.won;
+                    endBonus(msg);
+                } else if (!msg.correct) {
+                    console.log('bonus incorrect');
+                    wrongAnswer(msg.candidate);
+                }
                 // habilitar inputs a todos
             });
         });
@@ -57,9 +68,10 @@ var websocket = (function() {
                     word = $("#input").val();
                     if (key === 'Enter') {
                         // check word
-                        console.log("Mirar validez de la palabra");
+                        //console.log("Mirar validez de la palabra");
                     }
                     stompClient.send("/app/rooms/text/"+room, {}, JSON.stringify(word));
+                    
                 });
             }
         },

@@ -65,17 +65,24 @@ public class STOMPMessagesController {
             BombShPersistence game = rooms.get(room);
             Gson gson = new Gson();
             JsonObject json = new JsonObject();
-            json.addProperty("correct", game.checkWord(word.toLowerCase()));
+            boolean res = game.checkWord(word.toLowerCase());
+            json.addProperty("correct", res);
             json.addProperty("syllable", game.getSyllable());
             json.addProperty("player", game.getCurrentPlayer().getName());
             System.out.println("/parties/"+room + gson.toJson(json));
+            if (res) {
+                bonusRounds++;
+            }
             if (bonusRounds == 5) {
                 bonusRounds = 0;
                 // comienza ronda bonus
+                json.addProperty("begin", true);
+                //msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
+                msgt.convertAndSend("/rooms/bonus/"+room, gson.toJson(json));
             } else {
-                bonusRounds++;
                 msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
             }
+            System.out.println("van " + bonusRounds + " turnos");
             return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
 
         } catch (IOException e) {
@@ -89,13 +96,16 @@ public class STOMPMessagesController {
     public ResponseEntity<?> handlerPostResourceBonus(@PathVariable String room, @PathVariable String me, @RequestBody String word) {
         try {
             BombShPersistence game = rooms.get(room);
-            game.addQueue(me, word);
+            game.addQueue(me, word.toLowerCase());
             Gson gson = new Gson();
             JsonObject json = new JsonObject();
-            json.addProperty("correct", game.checkBonusWord());
+            boolean res = game.checkBonusWord();
+            json.addProperty("correct", res);
             json.addProperty("syllable", game.getSyllable());
-            json.addProperty("player", "");
-            System.out.println("/parties/"+room + gson.toJson(json));
+            json.addProperty("player", game.getCurrentPlayer().getName());
+            json.addProperty("candidate", game.find(me).getId());
+            json.addProperty("won", 1);
+            System.out.println("/rooms/bonus/"+room + gson.toJson(json));
             msgt.convertAndSend("/rooms/bonus/"+room, gson.toJson(json));
             return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
 

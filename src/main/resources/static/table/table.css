@@ -220,6 +220,16 @@ b {
   display: none;
 }
 
+.bonus-body {
+  animation: bonus-color 0.5s ease-in-out infinite;
+}
+
+.bonus-arrow {
+  animation: bonus-arrow 0.25s linear infinite;
+  top: 34%;
+  left: 34%;
+}
+
 .animate__animated.animate__heartBeat {
   --animate-duration: 0.4s;
 }
@@ -248,4 +258,29 @@ b {
   0% {
     transform: scale(1);
   }
+}
+
+@keyframes bonus-color {
+  0% {
+    background-color: #ff4e4e;
+  }
+  50% {
+    background-color: #ff7373;
+  }
+  100% {
+    background-color: #ff4e4e;
+  }
+}
+
+@keyframes bonus-arrow {
+  0% {
+    transform: rotateZ(0);
+  }
+  50% {
+    transform: rotateZ(180deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+  
 }
