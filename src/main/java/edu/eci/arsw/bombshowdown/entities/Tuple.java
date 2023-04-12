@@ -50,5 +50,11 @@ public class Tuple<T1, T2> {
         return true;
     }
 
-
+    @Override
+    public String toString() {
+        return "Tuple{" +
+                "o1=" + o1 +
+                ", o2=" + o2 +
+                '}';
+    }
 }

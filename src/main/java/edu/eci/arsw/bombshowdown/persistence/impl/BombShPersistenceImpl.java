@@ -70,6 +70,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public boolean checkWord(String word) throws IOException {
 
+        bonusWinner = false;
         boolean flag = false;
         List<RuleMatch> matches = langTool.check(word);
         System.out.println(matches + "the current syllable is: " + currentSyllable);
@@ -86,11 +87,18 @@ public class BombShPersistenceImpl implements BombShPersistence {
     public boolean checkBonusWord() throws IOException {
         if (!bonusWinner) {
             Tuple<String, String> turn = queue.poll();
+            System.out.println("Tupla: " + turn);
             List<RuleMatch> matches = langTool.check(turn.getElem2());
             System.out.println(matches + "the current syllable is: " + currentSyllable);
             if(matches.isEmpty() && turn.getElem2().contains(currentSyllable)){
                 System.out.println("Bonus winner: " + turn.getElem1());
                 bonusWinner = true;
+                for (Player py : players) {
+                    if (py.getName().equals(turn.getElem1())) {
+                        py.addLive();
+                    }
+                }
+                System.out.println(players);
                 queue.clear();
             }
         }
@@ -146,13 +154,24 @@ public class BombShPersistenceImpl implements BombShPersistence {
 //            }
 //        }
 
-        Player newPlayer= new Player(name, 1);
+        Player newPlayer= new Player(name, 1, players.size());
         players.add(newPlayer);
     }
 
     @Override
     public void killPlayer() {
 
+    }
+
+
+    @Override
+    public Player find(String name) {
+        for (Player py : players) {
+            if (py.getName().equals(name)) {
+                return py;
+            }
+        }
+        return null;
     }
 
     @Override

@@ -33,6 +33,7 @@ public interface BombShPersistence {
     public void addPlayer(String name);
 
     public void killPlayer();
+    public Player find(String name);
 
     public void start();
 

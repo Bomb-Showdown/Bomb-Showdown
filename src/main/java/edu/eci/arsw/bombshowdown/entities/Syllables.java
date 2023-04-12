@@ -9,7 +9,7 @@ public class Syllables {
 
     private static Syllables instance;
 
-    List<String> syllablesList = Arrays.asList("aud", "ar", "po", "mi");
+    List<String> syllablesList = Arrays.asList("au", "ar", "po", "mi", "az", "ama", "en", "di", "ara", "mos", "fe", "ai", "an");
 
     ArrayList<String> syllables = new ArrayList<>(syllablesList);
 

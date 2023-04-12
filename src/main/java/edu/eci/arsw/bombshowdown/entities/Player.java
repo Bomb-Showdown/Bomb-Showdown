@@ -4,11 +4,13 @@ public class Player {
 
     private int lives;
     private String name;
+    private int id;
 
 
-    public Player(String name, int lives){
+    public Player(String name, int lives, int id){
         this.lives = lives;
         this.name = name;
+        this.id = id;
     }
 
 
@@ -29,6 +31,13 @@ public class Player {
     }
     public void reduceLive(){
         this.lives = lives - 1;
+    }
+    public void addLive() {
+        this.lives++;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
