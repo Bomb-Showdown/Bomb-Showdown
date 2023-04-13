@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./table/table.css">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> -->
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <title>Bomb Showdown</title>
+  </head>
+  <body onload="websocket.init()">
+    <div class="lobby-container">
+      <input id="code" type="text" placeholder="room code"/>
+      <button onclick="websocket.connection($('#code').val())">Connect to room</button>
+      <input id="name" type="text" placeholder="name"/>
+      <button onclick="websocket.joinRoom($('#name').val())">Add player</button>
+      <!-- <div class="word-input">
+        <input type="text" name="text" id="input"/>
+        
+      </div> -->
+      <span id="word-ws"></span>
+  </div>
+  
+    
+    
+    <div class="game-container ">
+      <div class="board-container">
+        <!-- <div class="arrow"></div> -->
+        <!-- <div class="bomb">
+          <p class="syllable"></p>
+        </div> -->
+      </div>
+      <button class="start-btn hidden" onclick="websocket.startGame()">Start</button>
+    </div>
+    <div class="text-container hidden">
+      <p class="current-player"></p>
+      <input type="text" id="input" autocomplete="off" class="input-text" onkeydown="upperCaseF(this)" autofocus>
+    </div>
+
+    <script src="./table/table.js"></script>
+    <script src="/websocket.js"></script>
+  </body>
+</html>
