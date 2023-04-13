@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BombShPersistenceImpl implements BombShPersistence {
@@ -42,21 +43,6 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
-    public String getSyllable() {
-
-//        int max = syllables.size();
-//        int min = 0;
-//        int range = max - min + 1;
-//        int number = (int)(Math.random() * range) + min;
-//
-//        currentSyllable = syllables.get(number);
-//
-//        return syllables.get(number);
-        return currentSyllable;
-
-    }
-
-    @Override
     public void deleteSyllable(String syllabe) {
 
     }
@@ -68,12 +54,17 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
+    public String getSyllable() {
+        return currentSyllable;
+    }
+
+    @Override
     public boolean checkWord(String word) throws IOException {
 
         bonusWinner = false;
         boolean flag = false;
         List<RuleMatch> matches = langTool.check(word);
-        System.out.println(matches + "the current syllable is: " + currentSyllable);
+
         if(matches.isEmpty() && word.contains(currentSyllable)){
             flag = true;
             this.nextPlayer();
@@ -135,25 +126,33 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     @Override
     public void nextPlayer() {
-        if(currentPlayer + 1  > players.size() - 1) currentPlayer = 0;
-        else currentPlayer += 1;
-        //System.out.println(getCurrentPlayer());
+
+        getCurrentPlayer();
+
+        boolean alive = false;
+        int i = currentPlayer + 1;
+
+        if(i > players.size() - 1){
+            i = 0;
+        }
+
+        while (!alive){
+            if (players.get(i).getLives() == 0){
+                i += 1;
+            }
+            else alive = true;
+        }
+
+        currentPlayer = i;
+
+        getCurrentPlayer();
+
+        System.out.println("-----------------------");
 
     }
 
     @Override
     public void addPlayer(String name) {
-
-//        for(Player player:players){
-//            if(!players.isEmpty() & player.getName().equals(name)){
-//                System.out.println("player name already exists, try another");
-//            }
-//            else {
-//                Player newPlayer= new Player(name, 1);
-//                players.add(newPlayer);
-//            }
-//        }
-
         Player newPlayer= new Player(name, 1, players.size());
         players.add(newPlayer);
     }
@@ -181,11 +180,12 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     @Override
     public Player getCurrentPlayer() {
+        System.out.println(players.get(currentPlayer));
         return players.get(currentPlayer);
     }
 
     @Override
-    public void updateLifes(String name) {
+    public void updateLives(String name) {
         for(Player player:players){
             if(player.getName().equals(name)){
                 player.setLives(player.getLives());
@@ -194,14 +194,34 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
-    public void play(String word, int t0, int t1) throws IOException {
+    public void play(long t0) throws IOException {
+
         boolean correct = false;
-        int end = t0 + t1;
-        while (!correct && System.currentTimeMillis() < end){
+
+        long start = System.currentTimeMillis();
+
+        long end = start + 10 * 1000;
+
+        while (!correct && System.currentTimeMillis() < end) {
+
+            System.out.println("La silaba actual es -> " + currentSyllable);
+
+            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+            System.out.println("Introduzca Palabra");
+
+            String word = myObj.nextLine();  // Read user input
+            System.out.println("word introduced is: " + word);  // Output user input
             if (checkWord(word)) {
                 correct = true;
+                nextPlayer();
+                System.out.println("Palabra correcta, turno siguiente jugador");
             }
+
         }
+
+        correct = false;
+        bombExplodes();
+
     }
 
     @Override

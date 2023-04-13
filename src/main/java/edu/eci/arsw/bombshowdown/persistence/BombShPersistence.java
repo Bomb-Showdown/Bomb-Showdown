@@ -9,10 +9,11 @@ import java.util.Set;
 
 public interface BombShPersistence {
 
-    public String getSyllable();
-
     public void deleteSyllable(String syllabe);
+
     public void setSyllable();
+
+    String getSyllable();
 
     boolean checkWord(String word) throws IOException;
 
@@ -39,8 +40,7 @@ public interface BombShPersistence {
 
     public Player getCurrentPlayer();
 
-    public void updateLifes(String name);
+    public void updateLives(String name);
 
-
-    void play(String word, int t0, int t1) throws IOException;
+    void play(long t0) throws IOException;
 }

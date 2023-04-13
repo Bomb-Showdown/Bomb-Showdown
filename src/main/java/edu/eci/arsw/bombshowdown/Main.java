@@ -17,14 +17,30 @@ public class Main {
 
         /*BombShPersistenceImpl bs = new BombShPersistenceImpl();
 
-        bs.addPlayer("ernesto");
-        bs.addPlayer("julian");
         bs.addPlayer("andres");
+        bs.addPlayer("julian");
         bs.addPlayer("juan pablo");
-        bs.addPlayer("kalo");
+//        System.out.println(bs.getPlayers());
 
-        bs.setBombTimer();
+//        TEST ROTACION ENTRE VIVOS
+//        bs.nextPlayer(); // julian
+//
+//        bs.nextPlayer(); // juan pablo
+//
+//        bs.nextPlayer(); // andres
+//
+//        bs.bombExplodes(); // -1 vida
+//
+//        bs.nextPlayer(); // julian
+//
+//        bs.nextPlayer(); // juan pablo
+//
+//        bs.nextPlayer(); // deberia ser julian pq andres murio
+//
+//        bs.setBombTimer();
+//        bs.setSyllable();
 
+<<<<<<< HEAD
         // funciona next player falta que no recorra los que no tienen vidas
 
         System.out.println(bs.getCurrentPlayer());
@@ -62,6 +78,7 @@ public class Main {
 //
 //
 //        bs.play(word, t0, t1);
+        // bs.play(System.currentTimeMillis());
 
         Map<String, String> test = new ConcurrentHashMap<>();
         test.put("1", "a");
