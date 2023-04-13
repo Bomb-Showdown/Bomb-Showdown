@@ -102,6 +102,7 @@ var websocket = (function() {
                 contentType: "text/html"
             });
             me = player;
+            $('.lobby-container').addClass('hidden');
         },
 
         checkWord : function(word) {
