@@ -19,7 +19,7 @@
     <title>Bomb Showdown</title>
   </head>
   <body onload="websocket.init()">
-    <div>
+    <div class="lobby-container">
       <input id="code" type="text" placeholder="room code"/>
       <button onclick="websocket.connection($('#code').val())">Connect to room</button>
       <input id="name" type="text" placeholder="name"/>
