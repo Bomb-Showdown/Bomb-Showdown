@@ -43,4 +43,11 @@ public interface BombShPersistence {
     public void updateLives(String name);
 
     void play(long t0) throws IOException;
+
+    public long getTimeSinceLastTurn();
+
+    public void setTimeSinceLastTurn(long timeSinceLastTurn);
+
+    public int getDeadCount();
+
 }
