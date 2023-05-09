@@ -34,11 +34,18 @@ var degreeAngle;
 var liveIcon = '💗';
 var deadIcon = '💀';
 var sfx = {'correct': new Audio('./../sounds/correct.wav'),
-           'incorrect': new Audio('./../sounds/Error.wav')};
+           'incorrect': new Audio('./../sounds/Error.wav'),
+            'explosion': new Audio('./../sounds/boom.wav'),
+            'start': new Audio('./../sounds/start.wav'),
+            'end': new Audio('./../sounds/end.wav')};
 var entranceAnimations = ['fadeInDown', 'jackInTheBox', 'rollIn', 'zoomIn'];
 
 sfx.correct.volume = 0.3;
 sfx.incorrect.volume = 0.08;
+sfx.explosion.volume = 0.5;
+sfx.start.volume = 0.65;
+sfx.end.volume = 0.7;
+
 $(document).ready(function () {
     //addPlayers(players);
 });
@@ -61,6 +68,7 @@ var start = function (info) {
     $('.start-btn').addClass('hidden');
     $('.text-container').removeClass('hidden');
 
+    sfx.start.play();
     updateBombState();
     updatePlayersState();
     updateInputState();
@@ -78,6 +86,7 @@ var addPlayers = function(newPlayers) {
     $('.board-container').empty();
     $('.board-container').append(
         "<div class=\"arrow\"></div>\n" +
+        "<div class=\"boom hidden\"></div>\n" +
     "        <div class=\"bomb\">\n" +
     "          <p class=\"syllable\"></p>\n" +
     "        </div>");
@@ -133,7 +142,13 @@ var addPlayers = function(newPlayers) {
  */
 var rotateArrow = function(info, who = currentPlayer) {
     //animateCSS(players[currentPlayer].div, 'headShake');
-    animateCSS(players[who].div, 'rotateCenter');
+    if (info.correct !== "boom") {
+        animateCSS(players[who].div, 'rotateCenter');
+        sfx.correct.play();
+    } else if (info.correct === "boom") {
+        animateCSS(players[who].div, 'headShake');
+    }
+    
     
     arrowAngle += degreeAngle + degreeAngle*nextAlive(info.player);
     console.log('currentPlayer :>> ', currentPlayer);
@@ -145,7 +160,7 @@ var rotateArrow = function(info, who = currentPlayer) {
     console.log('info.syllable :>> ', info.syllable);
     syllable = info.syllable != "" ? info.syllable : syllable;
 
-    sfx.correct.play();
+    
 
     updateBombState();
     updatePlayersState();
@@ -273,6 +288,26 @@ var endBonus = function (info) {
     input.removeEventListener('keypress', pressEnterBonus);
     input.addEventListener('keypress', pressEnter);
     rotateArrow(info, info.candidate);
+}
+
+/**
+ * 
+ */
+var boom = function () {
+    sfx.explosion.play();
+    $('.boom').removeClass('hidden');
+    setTimeout(function() {
+        $('.boom').addClass('hidden');
+      }, 1000);
+}
+
+var endGame = function () {
+    $('.input-text').css('display', 'none');
+    $('.current-player').text('Gana el jugador ' + players[currentPlayer].name + '!');
+    $('.current-player').css('display', 'block');
+    $('.bomb').addClass('hidden');
+    $('.arrow').addClass('hidden');
+    sfx.end.play();
 }
 
 

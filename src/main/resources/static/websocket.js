@@ -31,13 +31,20 @@ var websocket = (function() {
                 if (msg.correct === "") {
                     console.log("start");
                     start(msg);
+                } else if (msg.correct === "boom") {
+                    players[msg.candidate].lives -= 1;
+                    boom();
+                    rotateArrow(msg);
+                    if (msg.winner) {
+                        endGame();
+                    }
                 } else if (msg.correct) {
                     console.log('correct');
                     rotateArrow(msg);
                 } else if (!msg.correct) {
                     console.log('incorrect');
                     wrongAnswer();
-                }
+                } 
             });
 
             stompClient.subscribe('/rooms/bonus/'+room, function (eventbody) {

@@ -159,7 +159,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     @Override
     public void addPlayer(String name) {
-        Player newPlayer= new Player(name, 3, players.size());
+        Player newPlayer= new Player(name, 2, players.size());
         players.add(newPlayer);
     }
 
