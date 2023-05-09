@@ -37,6 +37,10 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     private ConcurrentLinkedQueue<Tuple<String, String>> queue = new ConcurrentLinkedQueue<>();
 
+    private long timeSinceLastTurn;
+
+    private int deadCount = 0;
+
     public BombShPersistenceImpl(){
         syllables = syllablesInstance.getSyllables();
         currentSyllable = syllables.get(0);
@@ -69,6 +73,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
             flag = true;
             this.nextPlayer();
             this.setSyllable();
+            this.timeSinceLastTurn = System.currentTimeMillis();
         }
 
         return flag;
@@ -138,7 +143,8 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
         while (!alive){
             if (players.get(i).getLives() == 0){
-                i += 1;
+                i += (i + 1) % players.size();
+                System.out.println("bucle");
             }
             else alive = true;
         }
@@ -153,12 +159,19 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     @Override
     public void addPlayer(String name) {
-        Player newPlayer= new Player(name, 1, players.size());
+        Player newPlayer= new Player(name, 2, players.size());
         players.add(newPlayer);
     }
 
     @Override
     public void killPlayer() {
+        players.get(currentPlayer).reduceLive();
+        if (players.get(currentPlayer).getLives() == 0) {
+            this.deadCount++;
+        }
+        nextPlayer();
+        this.setSyllable();
+        this.timeSinceLastTurn = System.currentTimeMillis();
 
     }
 
@@ -222,6 +235,21 @@ public class BombShPersistenceImpl implements BombShPersistence {
         correct = false;
         bombExplodes();
 
+    }
+
+    @Override
+    public long getTimeSinceLastTurn() {
+        return timeSinceLastTurn;
+    }
+
+    @Override
+    public void setTimeSinceLastTurn(long timeSinceLastTurn) {
+        this.timeSinceLastTurn = timeSinceLastTurn;
+    }
+
+    @Override
+    public int getDeadCount() {
+        return deadCount;
     }
 
     @Override
