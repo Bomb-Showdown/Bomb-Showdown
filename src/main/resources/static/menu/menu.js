@@ -11,14 +11,15 @@ $(document).ready(function () {
     });
 
     $('#lobby-create-btn').on('click', function () {
+        websocket.connection(generateCode());
+        $('.lobby-choise').addClass('hidden');
+        $('.lobby-create-name').removeClass('hidden');
         $('.lobby-create').removeClass('hidden');
-        $('.lobby-create-code').removeClass('hidden');
-        $('.lobby-join').addClass('hidden');
     });
     $('#lobby-create-code-btn').on('click', function () {
         $('.lobby-choise').addClass('hidden');
         $('.lobby-create-code').addClass('hidden');
-        $('.lobby-create-name').removeClass('hidden');
+        
     });
 
     // $('.lobby-container').addClass('animate__animated animate__fadeInUp');

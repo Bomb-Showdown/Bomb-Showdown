@@ -98,6 +98,7 @@ var websocket = (function() {
                 data: "data",
                 contentType: "text/html"
             });
+            roomCode = code;
             connectAndSubscribe(code);
         },
 

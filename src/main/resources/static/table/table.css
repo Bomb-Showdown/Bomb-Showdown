@@ -12,6 +12,28 @@ body {
   margin: 0;
 }
 
+.room-code {
+  position: absolute;
+  font-family: 'Josefin Sans';
+  color: white;
+  text-shadow: 1px 1px 5px black;
+  font-size: 25px;
+  top: 9px;
+  margin: 10px;
+}
+
+.room-info {
+  position: absolute;
+  height: 167px;
+  width: 432px;
+  margin: 0px 8px;
+  top: 3px;
+
+  background-image: url('../img/code-msg.png');
+  background-size: cover;
+  background-position: center;
+}
+
 .game-container {
   height: 680px;
   width: 100%;
