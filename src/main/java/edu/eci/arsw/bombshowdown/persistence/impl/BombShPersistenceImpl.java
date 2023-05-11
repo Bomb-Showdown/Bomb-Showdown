@@ -89,6 +89,8 @@ public class BombShPersistenceImpl implements BombShPersistence {
             if(matches.isEmpty() && turn.getElem2().contains(currentSyllable)){
                 System.out.println("Bonus winner: " + turn.getElem1());
                 bonusWinner = true;
+                this.timeSinceLastTurn = System.currentTimeMillis();
+                this.setSyllable();
                 for (Player py : players) {
                     if (py.getName().equals(turn.getElem1())) {
                         py.addLive();
@@ -135,14 +137,14 @@ public class BombShPersistenceImpl implements BombShPersistence {
         getCurrentPlayer();
 
         boolean alive = false;
-        int i = currentPlayer + 1;
+        int i = (currentPlayer + 1) % players.size();
 
-        if(i > players.size() - 1){
-            i = 0;
-        }
+//        if(i > players.size() - 1){
+//            i = 0;
+//        }
 
         while (!alive){
-            if (players.get(i).getLives() == 0){
+            if (players.get(i).getLives() <= 0){
                 i += (i + 1) % players.size();
                 System.out.println("bucle");
             }
