@@ -131,10 +131,15 @@ var websocket = (function() {
         },
 
         startGame: function() {
-            $.ajax({
-                type: "POST",
-                url: "/games/rooms/"+room+"/start"
-            });
+            if (players.length > 1) {
+                $.ajax({
+                    type: "POST",
+                    url: "/games/rooms/"+room+"/start"
+                });
+            } else {
+                alert('Deben haber mínimo 2 jugadores.')
+            }
+            
         }
     };
 
