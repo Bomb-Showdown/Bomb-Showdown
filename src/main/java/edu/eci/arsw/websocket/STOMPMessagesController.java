@@ -67,14 +67,31 @@ public class STOMPMessagesController {
     @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}/word", consumes = "text/html")
     public ResponseEntity<?> handlerPostResource(@PathVariable String room, @RequestBody String word) {
         try {
+
             BombShPersistence game = rooms.get(room);
+            System.out.println("Tiempo desde el último turno: " + (System.currentTimeMillis() - game.getTimeSinceLastTurn()));
+            long time = (System.currentTimeMillis() - game.getTimeSinceLastTurn());
             Gson gson = new Gson();
             JsonObject json = new JsonObject();
-            boolean res = game.checkWord(word.toLowerCase());
-            json.addProperty("correct", res);
+            boolean res;
+            if (time < 10000) {
+                res = game.checkWord(word.toLowerCase());
+                json.addProperty("correct", res);
+            } else {
+                json.addProperty("correct", "boom");
+                json.addProperty("candidate", game.getCurrentPlayer().getId());
+                game.killPlayer();
+                res = false;
+            } if (game.getDeadCount() == game.getPlayers().size()-1) {
+                json.addProperty("winner", true);
+                System.out.println("GAME OVER");
+            }
+            //boolean res = game.checkWord(word.toLowerCase());
+
             json.addProperty("syllable", game.getSyllable());
             json.addProperty("player", game.getCurrentPlayer().getName());
             System.out.println("/parties/"+room + gson.toJson(json));
+            System.out.println(game);
             if (res) {
                 bonusRounds++;
             }
@@ -126,6 +143,7 @@ public class STOMPMessagesController {
         BombShPersistence game = rooms.get(room);
         Gson gson = new Gson();
         JsonObject json = new JsonObject();
+        game.setTimeSinceLastTurn(System.currentTimeMillis());
         json.addProperty("correct", "");
         json.addProperty("syllable", game.getSyllable());
         json.addProperty("player", game.getCurrentPlayer().getName());

@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./table/table.css">
+    <link rel="stylesheet" href="./menu/menu.css">
+
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> -->
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
@@ -19,15 +21,36 @@
     <title>Bomb Showdown</title>
   </head>
   <body onload="websocket.init()">
-    <div class="lobby-container">
-      <input id="code" type="text" placeholder="room code"/>
-      <button onclick="websocket.connection($('#code').val())">Connect to room</button>
-      <input id="name" type="text" placeholder="name"/>
-      <button onclick="websocket.joinRoom($('#name').val())">Add player</button>
-      <!-- <div class="word-input">
-        <input type="text" name="text" id="input"/>
-        
-      </div> -->
+    <div class="game-title tracking-in-expand">
+      <h1>Bomb Showdown</h1>
+    </div>
+
+    <div class="lobby-container slide-in-blurred-bottom">
+      <div class="lobby-choise">
+        <button class="lobby-button" id="lobby-create-btn">Crear lobby</button>
+        <button class="lobby-button" id="lobby-join-btn">Unirse a lobby</button>
+      </div>
+
+      <div class="lobby-join hidden">
+        <div class="lobby-join-code hidden">
+          <input class="lobby-input" id="code" type="text" placeholder="Código" autocomplete="off"/>
+          <button class="lobby-button" id="lobby-join-code-btn" onclick="websocket.connection($('#code').val())">Join</button>
+        </div>
+        <div class="lobby-join-name hidden">
+          <input class="lobby-input" id="name" type="text" placeholder="Ingresa tu nombre" autocomplete="off"/>
+          <button class="lobby-button" onclick="websocket.joinRoom($('#name').val())">OK</button>  
+        </div>
+      </div>
+      <div class="lobby-create hidden">
+        <div class="lobby-create-code hidden">
+          <input class="lobby-input" id="code0" type="text" placeholder="Código" autocomplete="off"/>
+          <button class="lobby-button" id="lobby-create-code-btn" onclick="websocket.connection($('#code0').val())">Create</button>
+        </div>
+        <div class="lobby-create-name hidden">
+          <input class="lobby-input" id="name0" type="text" placeholder="Ingresa tu nombre" autocomplete="off"/>
+          <button class="lobby-button" onclick="websocket.joinRoom($('#name0').val())">OK</button>  
+        </div>
+      </div>
       <span id="word-ws"></span>
   </div>
   
@@ -49,5 +72,6 @@
 
     <script src="./table/table.js"></script>
     <script src="/websocket.js"></script>
+    <script src="./menu/menu.js"></script>
   </body>
 </html>

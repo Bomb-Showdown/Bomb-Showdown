@@ -37,6 +37,10 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     private ConcurrentLinkedQueue<Tuple<String, String>> queue = new ConcurrentLinkedQueue<>();
 
+    private long timeSinceLastTurn;
+
+    private int deadCount = 0;
+
     public BombShPersistenceImpl(){
         syllables = syllablesInstance.getSyllables();
         currentSyllable = syllables.get(0);
@@ -69,6 +73,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
             flag = true;
             this.nextPlayer();
             this.setSyllable();
+            this.timeSinceLastTurn = System.currentTimeMillis();
         }
 
         return flag;
@@ -84,6 +89,8 @@ public class BombShPersistenceImpl implements BombShPersistence {
             if(matches.isEmpty() && turn.getElem2().contains(currentSyllable)){
                 System.out.println("Bonus winner: " + turn.getElem1());
                 bonusWinner = true;
+                this.timeSinceLastTurn = System.currentTimeMillis();
+                this.setSyllable();
                 for (Player py : players) {
                     if (py.getName().equals(turn.getElem1())) {
                         py.addLive();
@@ -130,15 +137,16 @@ public class BombShPersistenceImpl implements BombShPersistence {
         getCurrentPlayer();
 
         boolean alive = false;
-        int i = currentPlayer + 1;
+        int i = (currentPlayer + 1) % players.size();
 
-        if(i > players.size() - 1){
-            i = 0;
-        }
+//        if(i > players.size() - 1){
+//            i = 0;
+//        }
 
         while (!alive){
-            if (players.get(i).getLives() == 0){
-                i += 1;
+            if (players.get(i).getLives() <= 0){
+                i += (i + 1) % players.size();
+                System.out.println("bucle");
             }
             else alive = true;
         }
@@ -153,12 +161,19 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     @Override
     public void addPlayer(String name) {
-        Player newPlayer= new Player(name, 1, players.size());
+        Player newPlayer= new Player(name, 2, players.size());
         players.add(newPlayer);
     }
 
     @Override
     public void killPlayer() {
+        players.get(currentPlayer).reduceLive();
+        if (players.get(currentPlayer).getLives() == 0) {
+            this.deadCount++;
+        }
+        nextPlayer();
+        this.setSyllable();
+        this.timeSinceLastTurn = System.currentTimeMillis();
 
     }
 
@@ -222,6 +237,21 @@ public class BombShPersistenceImpl implements BombShPersistence {
         correct = false;
         bombExplodes();
 
+    }
+
+    @Override
+    public long getTimeSinceLastTurn() {
+        return timeSinceLastTurn;
+    }
+
+    @Override
+    public void setTimeSinceLastTurn(long timeSinceLastTurn) {
+        this.timeSinceLastTurn = timeSinceLastTurn;
+    }
+
+    @Override
+    public int getDeadCount() {
+        return deadCount;
     }
 
     @Override
