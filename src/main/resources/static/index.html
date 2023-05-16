@@ -21,6 +21,9 @@
     <title>Bomb Showdown</title>
   </head>
   <body onload="websocket.init()">
+    <div class="room-info hidden">
+      <p class="room-code"></p>
+    </div>
     <div class="game-title tracking-in-expand">
       <h1>Bomb Showdown</h1>
     </div>
@@ -44,7 +47,7 @@
       <div class="lobby-create hidden">
         <div class="lobby-create-code hidden">
           <input class="lobby-input" id="code0" type="text" placeholder="Código" autocomplete="off"/>
-          <button class="lobby-button" id="lobby-create-code-btn" onclick="websocket.connection($('#code0').val())">Create</button>
+          <button class="lobby-button" id="lobby-create-code-btn" onclick="websocket.connection(generateCode())">Create</button>
         </div>
         <div class="lobby-create-name hidden">
           <input class="lobby-input" id="name0" type="text" placeholder="Ingresa tu nombre" autocomplete="off"/>
