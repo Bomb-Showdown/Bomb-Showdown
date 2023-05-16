@@ -50,4 +50,6 @@ public interface BombShPersistence {
 
     public int getDeadCount();
 
+    public String toJsonElement();
+
 }
