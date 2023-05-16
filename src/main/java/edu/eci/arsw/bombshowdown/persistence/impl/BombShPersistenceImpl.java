@@ -145,7 +145,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
         while (!alive){
             if (players.get(i).getLives() <= 0){
-                i += (i + 1) % players.size();
+                i = (i + 1) % players.size();
                 System.out.println("bucle");
             }
             else alive = true;
