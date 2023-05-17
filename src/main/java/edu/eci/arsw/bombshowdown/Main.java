@@ -22,10 +22,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        Jedis jedis = new Jedis("3.91.61.183", 6379); // Establece la conexión a Redis
-        String cachejson = jedis.get("1"); // Obtén el valor JSON asociado a la clave "1"
+        Jedis jedis = new Jedis("3.89.126.40", 6379); // Establece la conexión a Redis
+        //String cachejson = jedis.get("1"); // Obtén el valor JSON asociado a la clave "1"
 
-//        System.out.println(cachejson);
+        //System.out.println(cachejson);
 
 //        String json = "[{\"lives\": 2, \"name\": \"juan\", \"id\": 1}, {\"lives\": 2, \"name\": \"rodrigo\", \"id\": 2}]";
 //
@@ -47,7 +47,7 @@ public class Main {
 //                "    \"timeSinceLastTurn\": 2500,\n" +
 //                "    \"deadCount\": 0\n" +
 //                "}";
-//
+
 
         RedisLobbyPersistence redisLobbyPersistence = new RedisLobbyPersistence();
 //        BombShPersistence game = objectMapper.readValue(cachejson, BombShPersistenceImpl.class);
@@ -55,15 +55,15 @@ public class Main {
 //        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 //        System.out.println(objectMapper.writeValueAsString(game));
 //
-        List<Player> players2 = new CopyOnWriteArrayList<>();
-        players2.add(new Player("ernesto", 1, 1));
+        //List<Player> players2 = new CopyOnWriteArrayList<>();
+        //players2.add(new Player("ernesto", 1, 1));
 
-        BombShPersistence game2 = new BombShPersistenceImpl(players2, 0, "NA", false, false, 1200, 0);
+        //BombShPersistence game2 = new BombShPersistenceImpl(players2, 0, "NA", false, false, 1200, 0);
         //redisLobbyPersistence.save("2", game2);
 
         System.out.println(game);
-        System.out.println("{\"players\":[{\"lives\":2,\"name\":\"juan\",\"id\":1},{\"lives\":2,\"name\":\"rodrigo\",\"id\":2}],\"currentPlayer\":0,\"currentSyllable\":\"GE\",\"started\":true,\"bonusWinner\":false,\"timeSinceLastTurn\":2500,\"deadCount\":0}"
-        );
+//        System.out.println("{\"players\":[{\"lives\":2,\"name\":\"juan\",\"id\":1},{\"lives\":2,\"name\":\"rodrigo\",\"id\":2}],\"currentPlayer\":0,\"currentSyllable\":\"GE\",\"started\":true,\"bonusWinner\":false,\"timeSinceLastTurn\":2500,\"deadCount\":0}"
+//        );
         System.out.println(game.toJsonElement());
     }
 }
