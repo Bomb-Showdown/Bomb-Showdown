@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class RedisLobbyPersistence implements LobbyPersistence {
 
-    private static final String SERVER_IP = "34.201.110.89";
+    private static final String SERVER_IP = "172.177.11.216";
     private static final int REDIS_PORT = 6379;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
