@@ -1,6 +1,5 @@
 package edu.eci.arsw.bombshowdown.entities;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Player {

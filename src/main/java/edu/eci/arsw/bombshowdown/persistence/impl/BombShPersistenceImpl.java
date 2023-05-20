@@ -2,7 +2,6 @@ package edu.eci.arsw.bombshowdown.persistence.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import edu.eci.arsw.bombshowdown.entities.Player;
 import edu.eci.arsw.bombshowdown.entities.Syllables;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -69,11 +67,6 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
         syllables = syllablesInstance.getSyllables();
         langTool = new JLanguageTool(new Spanish());
-    }
-
-    @Override
-    public void deleteSyllable(String syllabe) {
-
     }
 
     @Override
@@ -141,14 +134,6 @@ public class BombShPersistenceImpl implements BombShPersistence {
     @Override
     public int getBombTimer() {
         return bombTimer;
-    }
-
-    @Override
-    public void setBombTimer() {
-        int max = 10;
-        int min = 1;
-        int range = max - min + 1;
-        bombTimer = (int)(Math.random() * range) + min;
     }
 
     @Override
@@ -231,37 +216,6 @@ public class BombShPersistenceImpl implements BombShPersistence {
                 player.setLives(player.getLives());
             }
         }
-    }
-
-    @Override
-    public void play(long t0) throws IOException {
-
-        boolean correct = false;
-
-        long start = System.currentTimeMillis();
-
-        long end = start + 10 * 1000;
-
-        while (!correct && System.currentTimeMillis() < end) {
-
-            System.out.println("La silaba actual es -> " + currentSyllable);
-
-            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-            System.out.println("Introduzca Palabra");
-
-            String word = myObj.nextLine();  // Read user input
-            System.out.println("word introduced is: " + word);  // Output user input
-            if (checkWord(word)) {
-                correct = true;
-                nextPlayer();
-                System.out.println("Palabra correcta, turno siguiente jugador");
-            }
-
-        }
-
-        correct = false;
-        bombExplodes();
-
     }
 
     @Override
