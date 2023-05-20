@@ -80,12 +80,76 @@ public class BombShowdownApplicationTests {
 	public void shouldCheckBonusWord() {
 		try {
 			bombShowdownGame.addPlayer("Player 9");
-			bombShowdownGame.addQueue("Player 9", "audio");
+			bombShowdownGame.addQueue("Player 9", "aupo");
+			Assert.assertFalse(bombShowdownGame.checkBonusWord());
+			bombShowdownGame.addPlayer("Player 10");
+			bombShowdownGame.addQueue("Player 10", "auditorio");
 			Assert.assertTrue(bombShowdownGame.checkBonusWord());
 		} catch (Exception e) {
 			System.out.println("Error al revisar palabra en ronda bonus");
 		}
 	}
 
+	@Test
+	public void shouldGetSyllable() {
+		try {
+			Assert.assertEquals("au", bombShowdownGame.getSyllable());
+		} catch (Exception e) {
+			System.out.println("Error al revisar silaba");
+		}
+	}
+
+	@Test
+	public void shouldFindPlayer() {
+		try {
+			Assert.assertNull(bombShowdownGame.find("Player 11"));
+			bombShowdownGame.addPlayer("Player 11");
+			Assert.assertEquals("Player 11", bombShowdownGame.find("Player 11").getName());
+		} catch (Exception e) {
+			System.out.println("Error al encontrar jugador");
+		}
+	}
+
+	@Test
+	public void shouldUpdateLives() {
+		try {
+			bombShowdownGame.updateLives("Player 12");
+			bombShowdownGame.addPlayer("Player 12");
+			bombShowdownGame.updateLives("Player 12");
+			Assert.assertEquals(2, bombShowdownGame.find("Player 12").getLives());
+		} catch (Exception e) {
+			System.out.println("Error al actualizar vidas");
+		}
+	}
+
+	@Test
+	public void shouldSetTime() {
+		try {
+			bombShowdownGame.setTimeSinceLastTurn(123445);
+			Assert.assertEquals(123445, bombShowdownGame.getTimeSinceLastTurn());
+		} catch (Exception e) {
+			System.out.println("Error al configurar tiempo");
+		}
+	}
+
+	@Test
+	public void shouldToJson() {
+		try {
+			bombShowdownGame.addPlayer("Player 13");
+			Assert.assertEquals("{\"players\":[{\"lives\":2,\"name\":\"Player 13\",\"id\":0}],\"currentPlayer\":0,\"currentSyllable\":\"au\",\"started\":false,\"bonusWinner\":false,\"timeSinceLastTurn\":0,\"deadCount\":0}", bombShowdownGame.toJsonElement());
+		} catch (Exception e) {
+			System.out.println("Error al convertir a JSON");
+		}
+	}
+
+	@Test
+	public void shouldToString() {
+		try {
+			bombShowdownGame.addPlayer("Player 14");
+			Assert.assertEquals("BombShPersistenceImpl{players=[{\"lives\":2, \"name\":\"Player 14\", \"id\":0}], currentPlayer=0, currentSyllable='au', started=false, bonusWinner=false, timeSinceLastTurn=0, deadCount=0}", bombShowdownGame.toString());
+		} catch (Exception e) {
+			System.out.println("Error al convertir a JSON");
+		}
+	}
 
 }
