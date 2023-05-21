@@ -190,6 +190,11 @@ var updatePlayersState = function () {
             players[i].div.find('p').eq(1).text(deadIcon);
         } else if (players[i].lives >= 0) {
             players[i].div.find('p').eq(1).text(`${liveIcon.repeat(players[i].lives)}`);
+            players[i].div.find('p').eq(0).removeClass('dead');
+            players[i].div.css({
+                'background-color': 'rgb(192 199 219)',
+                color: 'white'
+            });
         }
     }
 }
