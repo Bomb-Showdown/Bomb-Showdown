@@ -2,6 +2,7 @@ package edu.eci.arsw.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.eci.arsw.bombshowdown.entities.Player;
 import edu.eci.arsw.bombshowdown.persistence.BombShPersistence;
@@ -93,6 +94,12 @@ public class STOMPMessagesController {
                 System.out.println("GAME OVER");
             }
             //boolean res = game.checkWord(word.toLowerCase());
+            JsonArray jsonArray = new JsonArray();
+            for (Player pl : game.getPlayers()) {
+                jsonArray.add(pl.getLives());
+            }
+
+            json.add("lives", jsonArray);
 
             json.addProperty("syllable", game.getSyllable());
             json.addProperty("player", game.getCurrentPlayer().getName());
@@ -134,6 +141,12 @@ public class STOMPMessagesController {
             json.addProperty("player", game.getCurrentPlayer().getName());
             json.addProperty("candidate", game.find(me).getId());
             json.addProperty("won", 1);
+            JsonArray jsonArray = new JsonArray();
+            for (Player pl : game.getPlayers()) {
+                jsonArray.add(pl.getLives());
+            }
+
+            json.add("lives", jsonArray);
             System.out.println("/rooms/bonus/"+room + gson.toJson(json));
             msgt.convertAndSend("/rooms/bonus/"+room, gson.toJson(json));
             rooms.save(room, game);

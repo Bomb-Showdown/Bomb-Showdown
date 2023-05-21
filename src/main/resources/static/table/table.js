@@ -144,7 +144,7 @@ var rotateArrow = function(info, who = currentPlayer) {
     syllable = info.syllable != "" ? info.syllable : syllable;
 
     
-
+    updateLives(info.lives);
     updateBombState();
     updatePlayersState();
     updateInputState();
@@ -222,6 +222,14 @@ var refreshText = function (info) {
         $('#player'+who).html((text.substring(0, ocurrences)+'<b>' + syllable.toUpperCase() + '</b>' + text.substring(ocurrences+syllable.length)
         ).replace('"', '').replace('"', ''));
     }
+}
+
+
+var updateLives = function(lives) {
+    for (let i = 0; i < lives.length; i++) {
+        players[i].lives = lives[i];
+    }
+    console.log('players :>> ', players);
 }
 
 
