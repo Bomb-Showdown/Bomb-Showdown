@@ -9,7 +9,9 @@ public class Syllables {
 
     private static Syllables instance;
 
-    List<String> syllablesList = Arrays.asList("au", "ar", "po", "mi", "az", "ama", "en", "di", "ara", "mos", "fe", "ai", "an");
+    private Random random = new Random();
+
+    List<String> syllablesList = Arrays.asList("au", "ar", "po", "mi", "az", "ama", "en", "di", "ara", "mos", "fe", "ai", "an", "gor", "me", "os", "se", "ili", "as", "ert", "de", "par", "na", "did", "rbi", "tan");
 
     ArrayList<String> syllables = new ArrayList<>(syllablesList);
 
@@ -18,7 +20,6 @@ public class Syllables {
     }
 
     public String getRandomSyllable() {
-        Random random = new Random();
         return syllables.get(random.nextInt(syllables.size()));
     }
 

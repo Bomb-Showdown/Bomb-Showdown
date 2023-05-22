@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        Jedis jedis = new Jedis("3.89.126.40", 6379); // Establece la conexión a Redis
+        Jedis jedis = new Jedis("172.177.11.216", 6379); // Establece la conexión a Redis
         //String cachejson = jedis.get("1"); // Obtén el valor JSON asociado a la clave "1"
 
         //System.out.println(cachejson);

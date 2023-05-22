@@ -3,13 +3,9 @@ package edu.eci.arsw.bombshowdown.persistence;
 import edu.eci.arsw.bombshowdown.entities.Player;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public interface BombShPersistence {
-
-    public void deleteSyllable(String syllabe);
 
     public void setSyllable();
 
@@ -25,8 +21,6 @@ public interface BombShPersistence {
 
     public int getBombTimer();
 
-    public void setBombTimer();
-
     public void bombExplodes();
 
     public void nextPlayer();
@@ -41,8 +35,6 @@ public interface BombShPersistence {
     public Player getCurrentPlayer();
 
     public void updateLives(String name);
-
-    void play(long t0) throws IOException;
 
     public long getTimeSinceLastTurn();
 

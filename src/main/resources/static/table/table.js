@@ -144,7 +144,7 @@ var rotateArrow = function(info, who = currentPlayer) {
     syllable = info.syllable != "" ? info.syllable : syllable;
 
     
-
+    updateLives(info.lives);
     updateBombState();
     updatePlayersState();
     updateInputState();
@@ -190,6 +190,11 @@ var updatePlayersState = function () {
             players[i].div.find('p').eq(1).text(deadIcon);
         } else if (players[i].lives >= 0) {
             players[i].div.find('p').eq(1).text(`${liveIcon.repeat(players[i].lives)}`);
+            players[i].div.find('p').eq(0).removeClass('dead');
+            players[i].div.css({
+                'background-color': 'rgb(192 199 219)',
+                color: 'white'
+            });
         }
     }
 }
@@ -222,6 +227,14 @@ var refreshText = function (info) {
         $('#player'+who).html((text.substring(0, ocurrences)+'<b>' + syllable.toUpperCase() + '</b>' + text.substring(ocurrences+syllable.length)
         ).replace('"', '').replace('"', ''));
     }
+}
+
+
+var updateLives = function(lives) {
+    for (let i = 0; i < lives.length; i++) {
+        players[i].lives = lives[i];
+    }
+    console.log('players :>> ', players);
 }
 
 
