@@ -1,5 +1,8 @@
 package edu.eci.arsw.bombshowdown.persistence.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import edu.eci.arsw.bombshowdown.entities.Player;
 import edu.eci.arsw.bombshowdown.entities.Syllables;
 import edu.eci.arsw.bombshowdown.entities.Tuple;
@@ -12,17 +15,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BombShPersistenceImpl implements BombShPersistence {
 
+    @JsonProperty("players")
     private List<Player> players= new CopyOnWriteArrayList<>();
 
+    @JsonProperty("currentPlayer")
     private int currentPlayer = 0;
 
     private int bombTimer;
 
+    @JsonProperty("currentSyllable")
     private String currentSyllable;
 
     static Syllables syllablesInstance = Syllables.getInstance();
@@ -31,14 +37,18 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
     JLanguageTool langTool = new JLanguageTool(new Spanish());
 
+    @JsonProperty("started")
     private boolean started = false;
 
+    @JsonProperty("bonusWinner")
     private boolean bonusWinner = false;
 
     private ConcurrentLinkedQueue<Tuple<String, String>> queue = new ConcurrentLinkedQueue<>();
 
+    @JsonProperty("timeSinceLastTurn")
     private long timeSinceLastTurn;
 
+    @JsonProperty("deadCount")
     private int deadCount = 0;
 
     public BombShPersistenceImpl(){
@@ -46,9 +56,17 @@ public class BombShPersistenceImpl implements BombShPersistence {
         currentSyllable = syllables.get(0);
     }
 
-    @Override
-    public void deleteSyllable(String syllabe) {
+    public BombShPersistenceImpl(List<Player> players, int currentPlayer, String currentSyllable, boolean started, boolean bonusWinner, long timeSinceLastTurn, int deadCount){
+        this.players = players;
+        this.currentPlayer = currentPlayer;
+        this.currentSyllable = currentSyllable;
+        this.started = started;
+        this.bonusWinner = bonusWinner;
+        this.timeSinceLastTurn = timeSinceLastTurn;
+        this.deadCount = deadCount;
 
+        syllables = syllablesInstance.getSyllables();
+        langTool = new JLanguageTool(new Spanish());
     }
 
     @Override
@@ -119,14 +137,6 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
-    public void setBombTimer() {
-        int max = 10;
-        int min = 1;
-        int range = max - min + 1;
-        bombTimer = (int)(Math.random() * range) + min;
-    }
-
-    @Override
     public void bombExplodes() {
         getCurrentPlayer().reduceLive();
     }
@@ -145,7 +155,7 @@ public class BombShPersistenceImpl implements BombShPersistence {
 
         while (!alive){
             if (players.get(i).getLives() <= 0){
-                i += (i + 1) % players.size();
+                i = (i + 1) % players.size();
                 System.out.println("bucle");
             }
             else alive = true;
@@ -209,37 +219,6 @@ public class BombShPersistenceImpl implements BombShPersistence {
     }
 
     @Override
-    public void play(long t0) throws IOException {
-
-        boolean correct = false;
-
-        long start = System.currentTimeMillis();
-
-        long end = start + 10 * 1000;
-
-        while (!correct && System.currentTimeMillis() < end) {
-
-            System.out.println("La silaba actual es -> " + currentSyllable);
-
-            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-            System.out.println("Introduzca Palabra");
-
-            String word = myObj.nextLine();  // Read user input
-            System.out.println("word introduced is: " + word);  // Output user input
-            if (checkWord(word)) {
-                correct = true;
-                nextPlayer();
-                System.out.println("Palabra correcta, turno siguiente jugador");
-            }
-
-        }
-
-        correct = false;
-        bombExplodes();
-
-    }
-
-    @Override
     public long getTimeSinceLastTurn() {
         return timeSinceLastTurn;
     }
@@ -254,14 +233,34 @@ public class BombShPersistenceImpl implements BombShPersistence {
         return deadCount;
     }
 
+    public String toJsonElement() {
+        Gson gson = new Gson();
+        //{"players":[{"lives":2,"name":"juan","id":1},{"lives":2,"name":"rodrigo","id":2}],"currentPlayer":0,"currentSyllable":"GE","started":true,"bonusWinner":false,"timeSinceLastTurn":2500,"deadCount":0}
+        JsonObject jsonObject = new JsonObject();
+        JsonArray jsonArray = new JsonArray();
+        for (Player pl: players) {
+            jsonArray.add(gson.toJsonTree(pl));
+        }
+        jsonObject.add("players", jsonArray);
+        jsonObject.addProperty("currentPlayer", currentPlayer);
+        jsonObject.addProperty("currentSyllable", currentSyllable);
+        jsonObject.addProperty("started", started);
+        jsonObject.addProperty("bonusWinner", bonusWinner);
+        jsonObject.addProperty("timeSinceLastTurn", timeSinceLastTurn);
+        jsonObject.addProperty("deadCount", deadCount);
+        return gson.toJson(jsonObject);
+    }
+
     @Override
     public String toString() {
         return "BombShPersistenceImpl{" +
                 "players=" + players +
                 ", currentPlayer=" + currentPlayer +
-                ", bombTimer=" + bombTimer +
-                ", currentSyllable='" + currentSyllable +
-                ", syllables=" + syllables +
+                ", currentSyllable='" + currentSyllable + '\'' +
+                ", started=" + started +
+                ", bonusWinner=" + bonusWinner +
+                ", timeSinceLastTurn=" + timeSinceLastTurn +
+                ", deadCount=" + deadCount +
                 '}';
     }
 }

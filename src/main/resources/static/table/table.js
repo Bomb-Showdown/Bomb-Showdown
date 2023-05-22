@@ -5,24 +5,7 @@
 
 var me = "Andrés";
 var syllable = ""
-
-var player1 = {"name": "Andrés",
-                "lives": 3,
-                "div": null};
-var player2 = {"name": "Juanpa",
-                "lives": 2};
-var player3 = {"name": "Julián",
-                "lives": 3};
-var player4 = {"name": "Vladimir",
-                "lives": 0};
-var player5 = {"name": "Bob",
-                "lives": 3};
-var player6 = {"name": "Hector",
-                "lives": 0};
-var player7 = {"name": "Vicky",
-                "lives": 4};
-var player8 = {"name": "Manolo Johnson",
-                "lives": 0};
+var roomCode = "";
                 
 var players = [/*player1, player2, player3, player4*/];
 var currentPlayer = 0;
@@ -38,6 +21,7 @@ var sfx = {'correct': new Audio('./../sounds/correct.wav'),
             'explosion': new Audio('./../sounds/boom.wav'),
             'start': new Audio('./../sounds/start.wav'),
             'end': new Audio('./../sounds/end.wav')};
+
 var entranceAnimations = ['fadeInDown', 'jackInTheBox', 'rollIn', 'zoomIn'];
 
 sfx.correct.volume = 0.3;
@@ -45,10 +29,6 @@ sfx.incorrect.volume = 0.08;
 sfx.explosion.volume = 0.5;
 sfx.start.volume = 0.65;
 sfx.end.volume = 0.7;
-
-$(document).ready(function () {
-    //addPlayers(players);
-});
 
 
 /**
@@ -80,6 +60,9 @@ var start = function (info) {
  * @param {Array[Object]} newPlayers jugadores de la sala
  */
 var addPlayers = function(newPlayers) {
+    $('.room-code').text(roomCode);
+    $('.room-info').removeClass('hidden');
+
 
     players = newPlayers;
     
@@ -161,7 +144,7 @@ var rotateArrow = function(info, who = currentPlayer) {
     syllable = info.syllable != "" ? info.syllable : syllable;
 
     
-
+    updateLives(info.lives);
     updateBombState();
     updatePlayersState();
     updateInputState();
@@ -207,6 +190,11 @@ var updatePlayersState = function () {
             players[i].div.find('p').eq(1).text(deadIcon);
         } else if (players[i].lives >= 0) {
             players[i].div.find('p').eq(1).text(`${liveIcon.repeat(players[i].lives)}`);
+            players[i].div.find('p').eq(0).removeClass('dead');
+            players[i].div.css({
+                'background-color': 'rgb(192 199 219)',
+                color: 'white'
+            });
         }
     }
 }
@@ -239,6 +227,14 @@ var refreshText = function (info) {
         $('#player'+who).html((text.substring(0, ocurrences)+'<b>' + syllable.toUpperCase() + '</b>' + text.substring(ocurrences+syllable.length)
         ).replace('"', '').replace('"', ''));
     }
+}
+
+
+var updateLives = function(lives) {
+    for (let i = 0; i < lives.length; i++) {
+        players[i].lives = lives[i];
+    }
+    console.log('players :>> ', players);
 }
 
 
@@ -301,6 +297,9 @@ var boom = function () {
       }, 1000);
 }
 
+/**
+ * 
+ */
 var endGame = function () {
     $('.input-text').css('display', 'none');
     $('.current-player').text('Gana el jugador ' + players[currentPlayer].name + '!');
@@ -308,6 +307,17 @@ var endGame = function () {
     $('.bomb').addClass('hidden');
     $('.arrow').addClass('hidden');
     sfx.end.play();
+}
+
+var generateCode = function () {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    for (let i = 0; i < 5; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    return result;
 }
 
 

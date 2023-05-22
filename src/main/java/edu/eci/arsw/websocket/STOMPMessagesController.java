@@ -1,10 +1,14 @@
 package edu.eci.arsw.websocket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.eci.arsw.bombshowdown.entities.Player;
 import edu.eci.arsw.bombshowdown.persistence.BombShPersistence;
 import edu.eci.arsw.bombshowdown.persistence.impl.BombShPersistenceImpl;
+import edu.eci.arsw.bombshowdown.repository.LobbyPersistence;
+import edu.eci.arsw.bombshowdown.repository.impl.RedisLobbyPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +34,8 @@ public class STOMPMessagesController {
     @Autowired
     SimpMessagingTemplate msgt;
 
-    Map<String, BombShPersistence> rooms = new ConcurrentHashMap<>();
+//    Map<String, BombShPersistence> rooms = new ConcurrentHashMap<>();
+    LobbyPersistence rooms = new RedisLobbyPersistence();
 
     int bonusRounds = 0;
 
@@ -50,13 +55,15 @@ public class STOMPMessagesController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/rooms/{room}/players", consumes = "text/html")
-    public ResponseEntity<?> handlerPutResource(@PathVariable String room, @RequestBody String player) {
-        if (rooms.containsKey(room)) {
+    public ResponseEntity<?> handlerPutResource(@PathVariable String room, @RequestBody String player) throws JsonProcessingException {
+        BombShPersistence game = rooms.get(room);
+        if (game != null) {
             System.out.println(player);
-            BombShPersistence game = rooms.get(room);
+//            BombShPersistence game = rooms.get(room);
             game.addPlayer(player);
             System.out.println(game);
             msgt.convertAndSend("/rooms/waiting-room/"+room, game.getPlayers());
+            rooms.save(room, game);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -87,6 +94,12 @@ public class STOMPMessagesController {
                 System.out.println("GAME OVER");
             }
             //boolean res = game.checkWord(word.toLowerCase());
+            JsonArray jsonArray = new JsonArray();
+            for (Player pl : game.getPlayers()) {
+                jsonArray.add(pl.getLives());
+            }
+
+            json.add("lives", jsonArray);
 
             json.addProperty("syllable", game.getSyllable());
             json.addProperty("player", game.getCurrentPlayer().getName());
@@ -105,6 +118,7 @@ public class STOMPMessagesController {
                 msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
             }
             System.out.println("van " + bonusRounds + " turnos");
+            rooms.save(room, game);
             return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
 
         } catch (IOException e) {
@@ -127,8 +141,15 @@ public class STOMPMessagesController {
             json.addProperty("player", game.getCurrentPlayer().getName());
             json.addProperty("candidate", game.find(me).getId());
             json.addProperty("won", 1);
+            JsonArray jsonArray = new JsonArray();
+            for (Player pl : game.getPlayers()) {
+                jsonArray.add(pl.getLives());
+            }
+
+            json.add("lives", jsonArray);
             System.out.println("/rooms/bonus/"+room + gson.toJson(json));
             msgt.convertAndSend("/rooms/bonus/"+room, gson.toJson(json));
+            rooms.save(room, game);
             return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
 
         } catch (IOException e) {
@@ -139,7 +160,7 @@ public class STOMPMessagesController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}/start")
-    public ResponseEntity<?> handlerStart(@PathVariable String room) {
+    public ResponseEntity<?> handlerStart(@PathVariable String room) throws JsonProcessingException {
         BombShPersistence game = rooms.get(room);
         Gson gson = new Gson();
         JsonObject json = new JsonObject();
@@ -149,14 +170,16 @@ public class STOMPMessagesController {
         json.addProperty("player", game.getCurrentPlayer().getName());
         System.out.println("/parties/"+room + gson.toJson(json));
         msgt.convertAndSend("/rooms/party/"+room, gson.toJson(json));
+        rooms.save(room, game);
         return new ResponseEntity<>(gson.toJson(json), HttpStatus.OK);
 
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/rooms/{room}")
-    public ResponseEntity<?> handlerPostResourceRoom(@PathVariable String room) {
-        if (!rooms.containsKey(room)) {
-            rooms.put(room, new BombShPersistenceImpl());
+    public ResponseEntity<?> handlerPostResourceRoom(@PathVariable String room) throws JsonProcessingException {
+        BombShPersistence game = rooms.get(room);
+        if (game == null) {
+            rooms.save(room, new BombShPersistenceImpl());
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.CONFLICT);

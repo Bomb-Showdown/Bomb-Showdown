@@ -1,11 +1,22 @@
 package edu.eci.arsw.bombshowdown.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Player {
 
+    @JsonProperty("lives")
     private int lives;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("id")
     private int id;
 
+
+    public Player() {
+
+    }
 
     public Player(String name, int lives, int id){
         this.lives = lives;
@@ -42,9 +53,10 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
-                "lives=" + lives +
-                ", name='" + name + '\'' +
+        return "{" +
+                "\"lives\":" + lives +
+                ", \"name\":\"" + name + '\"' +
+                ", \"id\":" + id +
                 '}';
     }
 }
